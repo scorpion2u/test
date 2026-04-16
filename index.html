@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>✨ GIF 百宝箱 · 秒开即用 ✨</title>
+    <title>🎬 GIF 搜索 · 即搜即下</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,7 +12,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, sans-serif;
             padding: 20px 16px 32px;
@@ -39,7 +39,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -48,35 +48,35 @@
         }
 
         .subhead {
-            color: #aaa;
+            color: #b8b5d9;
             font-weight: 400;
             font-size: 0.95rem;
         }
 
         .search-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
             border-radius: 60px;
             padding: 5px 5px 5px 24px;
             border: 1px solid rgba(255,255,255,0.15);
             display: flex;
             align-items: center;
-            max-width: 650px;
-            margin: 0 auto 25px;
+            max-width: 600px;
+            margin: 0 auto 20px;
         }
 
         .search-input {
             flex: 1;
             border: none;
             background: transparent;
-            font-size: 1.2rem;
-            padding: 15px 8px 15px 0;
+            font-size: 1.15rem;
+            padding: 14px 8px 14px 0;
             color: white;
             outline: none;
         }
 
         .search-input::placeholder {
-            color: #888;
+            color: #a9a6d9;
         }
 
         .search-btn {
@@ -84,8 +84,8 @@
             border: none;
             color: white;
             font-weight: 700;
-            font-size: 1.1rem;
-            padding: 13px 28px;
+            font-size: 1.05rem;
+            padding: 12px 26px;
             border-radius: 50px;
             cursor: pointer;
             transition: 0.2s;
@@ -99,24 +99,15 @@
             transform: scale(1.02);
         }
 
-        .category-section {
-            margin-bottom: 20px;
-        }
-
-        .category-title {
-            color: #ddd;
-            font-size: 1.2rem;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tag-cloud {
+        .quick-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
+            justify-content: center;
             margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .tag {
@@ -127,7 +118,7 @@
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.2);
             transition: 0.15s;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             backdrop-filter: blur(5px);
         }
 
@@ -138,10 +129,25 @@
 
         .status-area {
             text-align: center;
-            margin: 15px 0;
-            min-height: 30px;
-            color: #ccc;
+            margin: 15px 0 20px;
+            min-height: 32px;
+            color: #ddd;
+            font-weight: 500;
         }
+
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #f5576c;
+            border-radius: 50%;
+            animation: spin 0.8s infinite linear;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .gif-grid {
             display: grid;
@@ -169,7 +175,7 @@
         .gif-image-wrapper {
             width: 100%;
             aspect-ratio: 1 / 1;
-            background: #1e1e2f;
+            background: #1a1838;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -218,7 +224,7 @@
         .footer-note {
             margin-top: 40px;
             text-align: center;
-            color: #888;
+            color: #9a97c9;
             font-size: 0.85rem;
         }
 
@@ -227,9 +233,23 @@
             text-decoration: none;
         }
 
+        .info-badge {
+            background: rgba(245, 87, 108, 0.15);
+            border-radius: 30px;
+            padding: 8px 20px;
+            margin-bottom: 8px;
+            display: inline-block;
+            border: 1px solid rgba(245, 87, 108, 0.3);
+        }
+
         @media (max-width: 500px) {
             h1 { font-size: 1.8rem; }
             .gif-grid { grid-template-columns: repeat(2, 1fr); }
+            .search-input { font-size: 1rem; }
+        }
+
+        @media (max-width: 380px) {
+            .gif-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -237,30 +257,25 @@
 <div class="app-container">
     <div class="header">
         <h1>
-            <span>🎬</span> GIF 百宝箱 <span>✨</span>
+            <span>🎬</span> GIF 搜索 <span>✨</span>
         </h1>
-        <div class="subhead">本地数据库 · 秒开 · 即点即下</div>
+        <div class="subhead">基于 Tenor API · 即搜即下 · 发聊天超方便</div>
     </div>
 
     <div class="search-section">
-        <input type="text" class="search-input" id="searchInput" placeholder="搜索表情包..." value="猫">
+        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词（中英文皆可）..." value="cute cat" autofocus>
         <button class="search-btn" id="searchBtn">🔍 搜索</button>
     </div>
 
-    <!-- 热门分类标签 -->
-    <div class="category-section">
-        <div class="category-title">📌 热门分类</div>
-        <div class="tag-cloud" id="categoryTags">
-            <span class="tag" data-cat="猫">😺 猫咪</span>
-            <span class="tag" data-cat="狗">🐶 狗狗</span>
-            <span class="tag" data-cat="开心">😄 开心</span>
-            <span class="tag" data-cat="跳舞">💃 跳舞</span>
-            <span class="tag" data-cat="谢谢">🙏 谢谢</span>
-            <span class="tag" data-cat="庆祝">🎉 庆祝</span>
-            <span class="tag" data-cat="meme">😂 表情包</span>
-            <span class="tag" data-cat="熊猫">🐼 熊猫</span>
-            <span class="tag" data-cat="兔子">🐰 兔子</span>
-        </div>
+    <!-- 快捷标签（按 Skill 建议的关键词） -->
+    <div class="quick-tags">
+        <span class="tag" data-keyword="cute cat">😺 猫咪</span>
+        <span class="tag" data-keyword="happy dance">💃 开心舞</span>
+        <span class="tag" data-keyword="applause clap">👏 鼓掌</span>
+        <span class="tag" data-keyword="thank you">🙏 谢谢</span>
+        <span class="tag" data-keyword="celebration">🎉 庆祝</span>
+        <span class="tag" data-keyword="funny meme">😂 表情包</span>
+        <span class="tag" data-keyword="trending">🔥 热门</span>
     </div>
 
     <div class="status-area" id="statusArea"></div>
@@ -268,8 +283,13 @@
     <div class="gif-grid" id="gifGrid"></div>
 
     <div class="footer-note">
-        ⚡ 所有 GIF 来自公开 CDN · 点击下载直接保存到设备<br>
-        <span style="opacity:0.7;">💬 下载后即可粘贴到聊天框</span>
+        <div class="info-badge">
+            ⚡ 数据来自 Tenor · 内容已过滤 · 点击 GIF 或按钮下载
+        </div>
+        <div>
+            💬 下载后直接拖入聊天框 · 
+            <a href="#" id="refreshTrending">🔄 刷新热门</a>
+        </div>
     </div>
 </div>
 
@@ -277,121 +297,85 @@
     (function(){
         "use strict";
 
-        // ========== 内置 GIF 数据库（公开 CDN 链接，永久有效）==========
-        const GIF_DATABASE = [
-            // 猫咪
-            { tags: ['猫', '猫咪', 'cute', 'cat'], title: '可爱猫咪', url: 'https://media.tenor.com/8mZ0kPZx3yEAAAAC/cat-cute.gif' },
-            { tags: ['猫', '猫咪', 'funny', 'cat'], title: '搞笑猫咪', url: 'https://media.tenor.com/Wxfl3PqLzC0AAAAC/cat-funny.gif' },
-            { tags: ['猫', '猫咪', 'sleep', 'cat'], title: '睡觉猫咪', url: 'https://media.tenor.com/bQhK7xZoAuMAAAAC/cat-sleeping.gif' },
-            { tags: ['猫', '猫咪', 'play', 'cat'], title: '玩耍猫咪', url: 'https://media.tenor.com/2l4XwLg9ZzYAAAAC/cat-play.gif' },
-            // 狗狗
-            { tags: ['狗', '狗狗', 'cute', 'dog'], title: '可爱狗狗', url: 'https://media.tenor.com/8B5k0bYxP2cAAAAC/dog-cute.gif' },
-            { tags: ['狗', '狗狗', 'funny', 'dog'], title: '搞笑狗狗', url: 'https://media.tenor.com/x8v1oNUOmg4AAAAC/dog-funny.gif' },
-            { tags: ['狗', '狗狗', 'happy', 'dog'], title: '开心狗狗', url: 'https://media.tenor.com/2l7x0WxYj3kAAAAC/dog-happy.gif' },
-            // 开心
-            { tags: ['开心', 'happy', 'dance', 'dancing'], title: '开心跳舞', url: 'https://media.tenor.com/3G3-1x5z5p8AAAAC/happy-dance.gif' },
-            { tags: ['开心', 'happy', 'smile', 'joy'], title: '开心笑脸', url: 'https://media.tenor.com/L5Yh4GqXJhEAAAAC/happy-smile.gif' },
-            { tags: ['开心', 'happy', 'excited', 'yay'], title: '兴奋', url: 'https://media.tenor.com/8QZ7x3P9x2UAAAAC/excited-yay.gif' },
-            // 跳舞
-            { tags: ['跳舞', 'dance', 'dancing'], title: '跳舞1', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/dance.gif' },
-            { tags: ['跳舞', 'dance', 'dancing'], title: '跳舞2', url: 'https://media.tenor.com/4FqL0GqXJhEAAAAC/dance-party.gif' },
-            { tags: ['跳舞', 'dance', 'dancing', 'cat'], title: '猫咪跳舞', url: 'https://media.tenor.com/-0xWxYj3kAAAC/cat-dance.gif' },
-            // 谢谢
-            { tags: ['谢谢', 'thank', 'thanks', 'thankyou'], title: '谢谢', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/thank-you.gif' },
-            { tags: ['谢谢', 'thank', 'thanks'], title: '感谢', url: 'https://media.tenor.com/8QZ7x3P9x2UAAAAC/thanks.gif' },
-            // 庆祝
-            { tags: ['庆祝', 'celebrate', 'celebration', 'party'], title: '庆祝', url: 'https://media.tenor.com/2l7x0WxYj3kAAAAC/celebration.gif' },
-            { tags: ['庆祝', 'celebrate', 'party'], title: '派对', url: 'https://media.tenor.com/3G3-1x5z5p8AAAAC/party.gif' },
-            // 表情包/meme
-            { tags: ['meme', 'funny', '表情包'], title: '表情包1', url: 'https://media.tenor.com/4FqL0GqXJhEAAAAC/meme.gif' },
-            { tags: ['meme', 'funny', '表情包'], title: '表情包2', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/funny-meme.gif' },
-            { tags: ['meme', '表情包', 'laugh'], title: '大笑', url: 'https://media.tenor.com/8QZ7x3P9x2UAAAAC/laughing.gif' },
-            // 熊猫
-            { tags: ['熊猫', 'panda'], title: '熊猫1', url: 'https://media.tenor.com/2l7x0WxYj3kAAAAC/panda.gif' },
-            { tags: ['熊猫', 'panda'], title: '熊猫2', url: 'https://media.tenor.com/3G3-1x5z5p8AAAAC/panda-cute.gif' },
-            // 兔子
-            { tags: ['兔子', 'rabbit', 'bunny'], title: '兔子', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/bunny.gif' },
-            { tags: ['兔子', 'rabbit'], title: '可爱兔子', url: 'https://media.tenor.com/4FqL0GqXJhEAAAAC/rabbit-cute.gif' },
-            // 更多通用
-            { tags: ['love', 'heart', '爱心'], title: '爱心', url: 'https://media.tenor.com/8QZ7x3P9x2UAAAAC/love.gif' },
-            { tags: ['hello', 'hi', '打招呼'], title: '打招呼', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/hello.gif' },
-            { tags: ['goodbye', 'bye', '再见'], title: '再见', url: 'https://media.tenor.com/2l7x0WxYj3kAAAAC/bye.gif' },
-            { tags: ['yes', '点头'], title: '点头', url: 'https://media.tenor.com/3G3-1x5z5p8AAAAC/yes.gif' },
-            { tags: ['no', '摇头'], title: '摇头', url: 'https://media.tenor.com/4FqL0GqXJhEAAAAC/no.gif' },
-            { tags: ['clap', '鼓掌'], title: '鼓掌', url: 'https://media.tenor.com/8QZ7x3P9x2UAAAAC/clapping.gif' },
-            { tags: ['cry', '哭'], title: '哭泣', url: 'https://media.tenor.com/1k7x0WxYj3kAAAAC/crying.gif' },
-            { tags: ['angry', '生气'], title: '生气', url: 'https://media.tenor.com/2l7x0WxYj3kAAAAC/angry.gif' },
-            { tags: ['surprised', '惊讶'], title: '惊讶', url: 'https://media.tenor.com/3G3-1x5z5p8AAAAC/surprised.gif' },
-        ];
-
-        // ========== 额外的备用 GIF（使用 GIPHY 的永久链接）==========
-        const EXTRA_GIFS = [
-            { tags: ['猫', 'cat'], title: '猫猫头', url: 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif' },
-            { tags: ['狗', 'dog'], title: '狗狗头', url: 'https://media.giphy.com/media/3o7abB06u9bNzA8LC8/giphy.gif' },
-            { tags: ['开心', 'happy'], title: '超开心', url: 'https://media.giphy.com/media/26tOZ42Mg6pbTUPHW/giphy.gif' },
-            { tags: ['跳舞', 'dance'], title: '热舞', url: 'https://media.giphy.com/media/11lxCeKo6cHkJy/giphy.gif' },
-            { tags: ['谢谢', 'thank'], title: '鞠躬感谢', url: 'https://media.giphy.com/media/3o7abB06u9bNzA8LC8/giphy.gif' },
-            { tags: ['庆祝', 'celebrate'], title: '撒花', url: 'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif' },
-            { tags: ['meme', 'funny'], title: '搞笑', url: 'https://media.giphy.com/media/3o7abB06u9bNzA8LC8/giphy.gif' },
-        ];
-
-        // 合并数据库
-        const ALL_GIFS = [...GIF_DATABASE, ...EXTRA_GIFS];
+        // ========== 按照 LobeHub Skill 配置的 Tenor API ==========
+        // API Key: Google 提供的 Tenor 演示密钥（稳定可靠）
+        const TENOR_API_KEY = 'LIVDSRZULELA';
+        const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
+        const TENOR_TRENDING_URL = 'https://g.tenor.com/v2/trending';
+        const LIMIT = 24;
 
         // DOM 元素
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const statusArea = document.getElementById('statusArea');
         const gifGrid = document.getElementById('gifGrid');
+        const refreshTrending = document.getElementById('refreshTrending');
 
-        // ========== 搜索函数（纯本地过滤）==========
-        function searchGifs(query) {
-            const trimmedQuery = query.trim().toLowerCase();
-            if (!trimmedQuery) return ALL_GIFS;
-            
-            return ALL_GIFS.filter(gif => {
-                // 检查标签
-                if (gif.tags.some(tag => tag.toLowerCase().includes(trimmedQuery))) return true;
-                // 检查标题
-                if (gif.title.toLowerCase().includes(trimmedQuery)) return true;
-                return false;
-            });
+        let currentAbortController = null;
+
+        // ========== 辅助函数 ==========
+        function setStatus(text, isLoading = false) {
+            if (isLoading) {
+                statusArea.innerHTML = `<span class="loader"></span> ${text}`;
+            } else {
+                statusArea.innerHTML = text;
+            }
+        }
+
+        function clearGrid() {
+            gifGrid.innerHTML = '';
         }
 
         // ========== 下载 GIF ==========
         async function downloadGif(url, filename) {
             try {
+                setStatus('📥 正在下载...');
                 const response = await fetch(url);
+                if (!response.ok) throw new Error('网络错误');
                 const blob = await response.blob();
+                
                 const a = document.createElement('a');
                 const blobUrl = URL.createObjectURL(blob);
                 a.href = blobUrl;
-                const cleanName = filename.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 20);
+                const cleanName = (filename || 'gif').replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 30);
                 a.download = `${cleanName}_${Date.now()}.gif`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(blobUrl);
+                
+                setStatus('✅ 下载成功！');
+                setTimeout(() => setStatus(''), 1500);
             } catch (err) {
-                // 降级：直接打开
+                console.warn('下载失败，打开原图:', err);
                 window.open(url, '_blank');
+                setStatus('💡 请在新标签页长按或右键保存');
+                setTimeout(() => setStatus(''), 2000);
             }
         }
 
-        // ========== 渲染网格 ==========
-        function renderGrid(gifs, query = '') {
-            gifGrid.innerHTML = '';
+        // ========== 渲染 GIF 网格 ==========
+        function renderGifs(results, queryTerm = '') {
+            clearGrid();
             
-            if (gifs.length === 0) {
-                statusArea.innerHTML = `<span style="color:#f5576c;">😕 没有找到 "${query}" 相关的 GIF</span>`;
-                // 显示全部作为后备
-                renderGrid(ALL_GIFS, '');
+            if (!results || results.length === 0) {
+                setStatus(`😕 没有找到 "${queryTerm}" 的相关 GIF，换个词试试？`);
                 return;
             }
             
-            statusArea.innerHTML = `<span style="color:#4CAF50;">✅ 找到 ${gifs.length} 个 GIF</span>`;
+            setStatus(`✅ 找到 ${results.length} 个 GIF`);
             
-            gifs.forEach(gif => {
+            results.forEach(item => {
+                // 获取 GIF URL
+                const gifUrl = item.media_formats?.gif?.url || 
+                               item.media_formats?.tinygif?.url || 
+                               item.media_formats?.mediumgif?.url;
+                
+                if (!gifUrl) return;
+                
+                const title = item.content_description || item.title || 'GIF';
+                const shortTitle = title.length > 20 ? title.slice(0, 18) + '..' : title;
+                
                 const card = document.createElement('div');
                 card.className = 'gif-card';
                 
@@ -399,12 +383,11 @@
                 imgWrapper.className = 'gif-image-wrapper';
                 const img = document.createElement('img');
                 img.className = 'gif-img';
-                img.src = gif.url;
-                img.alt = gif.title;
+                img.src = gifUrl;
+                img.alt = title;
                 img.loading = 'lazy';
                 img.onerror = function() {
-                    // 如果图片加载失败，使用备用样式
-                    this.style.backgroundColor = '#333';
+                    this.style.backgroundColor = '#2a2848';
                 };
                 
                 imgWrapper.appendChild(img);
@@ -414,15 +397,15 @@
                 
                 const titleSpan = document.createElement('span');
                 titleSpan.className = 'gif-title';
-                titleSpan.textContent = gif.title.length > 15 ? gif.title.slice(0,13)+'..' : gif.title;
-                titleSpan.title = gif.title;
+                titleSpan.textContent = shortTitle;
+                titleSpan.title = title;
                 
                 const downloadBtn = document.createElement('button');
                 downloadBtn.className = 'download-btn';
                 downloadBtn.innerHTML = '⬇️ 下载';
                 downloadBtn.onclick = (e) => {
                     e.stopPropagation();
-                    downloadGif(gif.url, gif.title);
+                    downloadGif(gifUrl, title);
                 };
                 
                 footer.appendChild(titleSpan);
@@ -432,43 +415,138 @@
                 card.appendChild(footer);
                 
                 // 点击卡片也可以下载
-                card.onclick = () => downloadGif(gif.url, gif.title);
+                card.onclick = () => downloadGif(gifUrl, title);
                 
                 gifGrid.appendChild(card);
             });
         }
 
-        // ========== 执行搜索 ==========
-        function performSearch(query) {
-            const results = searchGifs(query);
-            renderGrid(results, query);
+        // ========== 搜索 GIF ==========
+        async function searchGifs(query) {
+            const trimmedQuery = query.trim();
+            if (!trimmedQuery) {
+                searchInput.value = 'cute cat';
+                return searchGifs('cute cat');
+            }
+            
+            // 取消之前的请求
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+            
+            clearGrid();
+            setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
+            
+            try {
+                const params = new URLSearchParams({
+                    key: TENOR_API_KEY,
+                    q: trimmedQuery,
+                    limit: LIMIT.toString(),
+                    media_filter: 'gif',
+                    contentfilter: 'medium',  // 按 Skill 建议，过滤不适当内容
+                    locale: 'zh_CN'
+                });
+                
+                const url = `${TENOR_SEARCH_URL}?${params.toString()}`;
+                const response = await fetch(url, { signal: currentAbortController.signal });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                if (currentAbortController.signal.aborted) return;
+                
+                renderGifs(data.results, trimmedQuery);
+                
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('搜索失败:', error);
+                setStatus(`⚠️ 搜索失败，请稍后重试`);
+            } finally {
+                currentAbortController = null;
+            }
+        }
+
+        // ========== 获取热门 GIF ==========
+        async function fetchTrending() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+            
+            clearGrid();
+            setStatus('🔥 加载热门 GIF ...', true);
+            
+            try {
+                const params = new URLSearchParams({
+                    key: TENOR_API_KEY,
+                    limit: LIMIT.toString(),
+                    media_filter: 'gif',
+                    contentfilter: 'medium',
+                    locale: 'zh_CN'
+                });
+                
+                const url = `${TENOR_TRENDING_URL}?${params.toString()}`;
+                const response = await fetch(url, { signal: currentAbortController.signal });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                if (currentAbortController.signal.aborted) return;
+                
+                renderGifs(data.results, '热门');
+                searchInput.value = '';
+                
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('获取热门失败:', error);
+                setStatus(`⚠️ 加载失败，请稍后重试`);
+            } finally {
+                currentAbortController = null;
+            }
         }
 
         // ========== 初始化 ==========
         function init() {
             // 搜索按钮
             searchBtn.addEventListener('click', () => {
-                performSearch(searchInput.value);
+                searchGifs(searchInput.value);
             });
             
             // 回车搜索
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    performSearch(searchInput.value);
+                    searchGifs(searchInput.value);
                 }
             });
             
-            // 分类标签点击
-            document.querySelectorAll('[data-cat]').forEach(tag => {
+            // 快捷标签
+            document.querySelectorAll('.tag').forEach(tag => {
                 tag.addEventListener('click', () => {
-                    const cat = tag.dataset.cat;
-                    searchInput.value = cat;
-                    performSearch(cat);
+                    const keyword = tag.dataset.keyword;
+                    if (keyword === 'trending') {
+                        fetchTrending();
+                    } else {
+                        searchInput.value = keyword;
+                        searchGifs(keyword);
+                    }
                 });
             });
             
-            // 初始加载
-            performSearch('猫');
+            // 刷新热门
+            refreshTrending.addEventListener('click', (e) => {
+                e.preventDefault();
+                fetchTrending();
+            });
+            
+            // 页面加载时执行默认搜索
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    searchGifs('cute cat');
+                }, 100);
+            });
         }
 
         init();
