@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🎬 表情包搜索 · 稳定代理版</title>
+    <title>🎬 表情包搜索 · 稳定版</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,7 +25,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -42,15 +42,26 @@
             font-size: 0.9rem;
         }
 
-        .proxy-badge {
-            background: rgba(74, 222, 128, 0.15);
-            border-radius: 30px;
+        .source-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+
+        .source-btn {
+            background: rgba(255,255,255,0.08);
             padding: 6px 16px;
-            display: inline-block;
-            margin-top: 8px;
-            color: #4ade80;
+            border-radius: 30px;
+            color: #aaa;
             font-size: 0.8rem;
-            border: 1px solid rgba(74, 222, 128, 0.3);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .source-btn.active {
+            background: #f7971e;
+            color: #1a1a2e;
         }
 
         .search-section {
@@ -284,8 +295,14 @@
 <div class="app-container">
     <div class="header">
         <h1>🎬 表情包搜索 ✨</h1>
-        <div class="subhead">Tenor API · 私人代理 · 稳定高速</div>
-        <div class="proxy-badge">🟢 代理已连接：project-t90be.vercel.app</div>
+        <div class="subhead">多源切换 · 一键分享</div>
+    </div>
+
+    <!-- 数据源切换 -->
+    <div class="source-selector">
+        <span class="source-btn active" data-source="tenor">Tenor</span>
+        <span class="source-btn" data-source="giphy">GIPHY</span>
+        <span class="source-btn" data-source="trending">🔥 热门推荐</span>
     </div>
 
     <div class="search-section">
@@ -308,7 +325,7 @@
     <div class="status-area" id="statusArea"></div>
     <div class="gif-grid" id="gifGrid"></div>
 
-    <div class="footer-note">⚡ 数据来自 Tenor · 代理稳定运行中</div>
+    <div class="footer-note">⚡ 支持 Tenor / GIPHY · 稳定可用</div>
 </div>
 
 <div class="modal" id="shareModal">
@@ -332,12 +349,15 @@
 
         // ========== 配置 ==========
         const TENOR_API_KEY = 'LIVDSRZULELA';
-        const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
-        const LIMIT = 30;
+        const GIPHY_API_KEY = '0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk';
         
-        // 您的私人代理地址
-        const PROXY_URL = 'https://project-t90be.vercel.app/?url=';
+        // 公共 CORS 代理（轮换使用）
+        const PROXY_LIST = [
+            'https://corsproxy.io/?',
+            'https://api.allorigins.win/raw?url='
+        ];
 
+        let currentSource = 'tenor';
         let currentAbortController = null;
         let currentGifUrl = '';
         let currentGifTitle = '';
@@ -371,20 +391,92 @@
             return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
         }
 
-        // ========== 使用私人代理请求 ==========
-        async function fetchWithProxy(url) {
-            const proxyUrl = PROXY_URL + encodeURIComponent(url);
-            console.log('通过私人代理请求:', proxyUrl.substring(0, 100) + '...');
-            
-            const response = await fetch(proxyUrl, { 
-                signal: currentAbortController?.signal 
+        // ========== 切换数据源 ==========
+        function switchSource(source) {
+            currentSource = source;
+            document.querySelectorAll('.source-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.source === source);
             });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+        }
+
+        // ========== 尝试多个代理请求 ==========
+        async function fetchWithProxy(url) {
+            for (const proxy of PROXY_LIST) {
+                try {
+                    const proxyUrl = proxy + encodeURIComponent(url);
+                    console.log('尝试代理:', proxy.substring(0, 30) + '...');
+                    
+                    const response = await fetch(proxyUrl, { 
+                        signal: currentAbortController?.signal 
+                    });
+                    
+                    if (!response.ok) continue;
+                    
+                    const data = await response.json();
+                    return data;
+                } catch (e) {
+                    console.warn('代理失败:', e.message);
+                    continue;
+                }
             }
-            
-            return response.json();
+            throw new Error('所有代理均失败');
+        }
+
+        // ========== 构建 API URL ==========
+        function buildApiUrl(query) {
+            if (currentSource === 'tenor') {
+                const params = new URLSearchParams({
+                    key: TENOR_API_KEY,
+                    q: query,
+                    limit: '30',
+                    media_filter: 'gif',
+                    contentfilter: 'medium'
+                });
+                return `https://g.tenor.com/v2/search?${params.toString()}`;
+            } else if (currentSource === 'giphy') {
+                const params = new URLSearchParams({
+                    api_key: GIPHY_API_KEY,
+                    q: query,
+                    limit: '30',
+                    rating: 'g',
+                    lang: 'zh'
+                });
+                return `https://api.giphy.com/v1/gifs/search?${params.toString()}`;
+            } else {
+                // trending
+                if (currentSource === 'giphy') {
+                    return `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=30&rating=g`;
+                } else {
+                    return `https://g.tenor.com/v2/trending?key=${TENOR_API_KEY}&limit=30&media_filter=gif`;
+                }
+            }
+        }
+
+        // ========== 解析响应 ==========
+        function parseResults(data) {
+            if (currentSource === 'tenor') {
+                return data.results || [];
+            } else {
+                return data.data || [];
+            }
+        }
+
+        function extractGifInfo(item) {
+            if (currentSource === 'tenor') {
+                return {
+                    url: item.media_formats?.gif?.url || item.media_formats?.tinygif?.url,
+                    preview: item.media_formats?.tinygif?.url,
+                    size: item.media_formats?.gif?.size,
+                    title: item.content_description || item.title || 'GIF'
+                };
+            } else {
+                return {
+                    url: item.images?.fixed_width?.url || item.images?.original?.url,
+                    preview: item.images?.fixed_width_small?.url || item.images?.fixed_width?.url,
+                    size: parseInt(item.images?.fixed_width?.size) || 0,
+                    title: item.title || 'GIF'
+                };
+            }
         }
 
         // ========== 渲染 GIF ==========
@@ -392,21 +484,15 @@
             clearGrid();
             
             if (!results || results.length === 0) {
-                setStatus(`😕 没有找到 "${queryTerm}" 的相关表情包`);
+                setStatus(`😕 没有找到表情包`);
                 return;
             }
             
             setStatus(`✅ 找到 ${results.length} 个表情包`);
             
             results.forEach(item => {
-                const gifUrl = item.media_formats?.gif?.url || 
-                               item.media_formats?.tinygif?.url;
-                const previewUrl = item.media_formats?.tinygif?.url || gifUrl;
-                const gifSize = item.media_formats?.gif?.size;
-                
-                if (!gifUrl) return;
-                
-                const title = item.content_description || item.title || 'GIF';
+                const gif = extractGifInfo(item);
+                if (!gif.url) return;
                 
                 const card = document.createElement('div');
                 card.className = 'gif-card';
@@ -415,8 +501,8 @@
                 imgWrapper.className = 'gif-image-wrapper';
                 const img = document.createElement('img');
                 img.className = 'gif-img';
-                img.src = previewUrl;
-                img.alt = title;
+                img.src = gif.preview || gif.url;
+                img.alt = gif.title;
                 img.loading = 'lazy';
                 
                 imgWrapper.appendChild(img);
@@ -426,21 +512,21 @@
                 
                 const sizeSpan = document.createElement('span');
                 sizeSpan.className = 'gif-size';
-                sizeSpan.textContent = formatSize(gifSize);
+                sizeSpan.textContent = formatSize(gif.size);
                 
                 const shareBtn = document.createElement('button');
                 shareBtn.className = 'share-btn';
                 shareBtn.innerHTML = '📤 分享';
                 shareBtn.onclick = (e) => {
                     e.stopPropagation();
-                    openShareModal(gifUrl, title);
+                    openShareModal(gif.url, gif.title);
                 };
                 
                 footer.appendChild(sizeSpan);
                 footer.appendChild(shareBtn);
                 card.appendChild(imgWrapper);
                 card.appendChild(footer);
-                card.onclick = () => openShareModal(gifUrl, title);
+                card.onclick = () => openShareModal(gif.url, gif.title);
                 
                 gifGrid.appendChild(card);
             });
@@ -473,32 +559,24 @@
             currentAbortController = new AbortController();
             
             clearGrid();
-            setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
-            tipBar.innerHTML = `🌐 通过私人代理请求 Tenor API...`;
+            setStatus(`🔍 搜索中...`, true);
+            tipBar.innerHTML = `🌐 正在从 ${currentSource.toUpperCase()} 获取数据...`;
             
             try {
-                const params = new URLSearchParams({
-                    key: TENOR_API_KEY,
-                    q: trimmedQuery,
-                    limit: LIMIT.toString(),
-                    media_filter: 'gif',
-                    contentfilter: 'medium',
-                    locale: 'zh_CN'
-                });
-                
-                const apiUrl = `${TENOR_SEARCH_URL}?${params.toString()}`;
+                const apiUrl = buildApiUrl(trimmedQuery);
                 const data = await fetchWithProxy(apiUrl);
                 
                 if (currentAbortController.signal.aborted) return;
                 
-                renderGifs(data.results, trimmedQuery);
+                const results = parseResults(data);
+                renderGifs(results, trimmedQuery);
                 tipBar.innerHTML = `✅ 搜索成功 · 点击表情包分享`;
                 
             } catch (error) {
                 if (error.name === 'AbortError') return;
                 console.error('搜索失败:', error);
-                setStatus(`⚠️ 请求失败`);
-                tipBar.innerHTML = `❌ 代理可能暂时不可用，请稍后重试`;
+                setStatus(`⚠️ 请求失败，尝试切换数据源`);
+                tipBar.innerHTML = `❌ 当前代理不可用，请点击上方切换 Tenor/GIPHY 重试`;
             } finally {
                 currentAbortController = null;
             }
@@ -508,32 +586,27 @@
         function shareToWhatsApp() {
             const text = encodeURIComponent(`${currentGifTitle}\n${currentGifUrl}`);
             window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-            tipBar.innerHTML = '✅ 已唤起 WhatsApp，选择联系人发送';
+            tipBar.innerHTML = '✅ 已唤起 WhatsApp';
         }
 
         function shareToWeChat() {
             navigator.clipboard.writeText(currentGifUrl).then(() => {
-                tipBar.innerHTML = '✅ 链接已复制！打开微信粘贴到聊天框';
+                tipBar.innerHTML = '✅ 链接已复制！粘贴到微信即可';
                 closeModal();
-            }).catch(() => {
-                prompt('手动复制链接：', currentGifUrl);
-            });
+            }).catch(() => prompt('手动复制：', currentGifUrl));
         }
 
         function copyLink() {
             navigator.clipboard.writeText(currentGifUrl).then(() => {
                 tipBar.innerHTML = '✅ 链接已复制';
                 closeModal();
-            }).catch(() => {
-                prompt('手动复制：', currentGifUrl);
-            });
+            }).catch(() => prompt('手动复制：', currentGifUrl));
         }
 
         async function downloadGif() {
             try {
                 setStatus('📥 下载中...');
-                const proxyUrl = PROXY_URL + encodeURIComponent(currentGifUrl);
-                const response = await fetch(proxyUrl);
+                const response = await fetch(currentGifUrl);
                 const blob = await response.blob();
                 
                 const a = document.createElement('a');
@@ -541,18 +614,29 @@
                 a.download = `${currentGifTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').slice(0, 20)}.gif`;
                 a.click();
                 
-                tipBar.innerHTML = '✅ 已保存到相册';
+                tipBar.innerHTML = '✅ 已保存';
                 setStatus('');
                 closeModal();
             } catch (err) {
                 window.open(currentGifUrl, '_blank');
-                tipBar.innerHTML = '💡 请在新页面长按保存';
+                tipBar.innerHTML = '💡 请长按保存';
                 setStatus('');
             }
         }
 
         // ========== 初始化 ==========
         function init() {
+            // 数据源切换
+            document.querySelectorAll('.source-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchSource(btn.dataset.source);
+                    if (btn.dataset.source === 'trending') {
+                        searchInput.value = '';
+                        searchGifs('');
+                    }
+                });
+            });
+            
             searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchGifs(searchInput.value);
@@ -561,6 +645,10 @@
             document.querySelectorAll('.tag').forEach(tag => {
                 tag.addEventListener('click', () => {
                     searchInput.value = tag.dataset.keyword;
+                    switchSource('tenor');
+                    document.querySelector('[data-source="tenor"]').classList.add('active');
+                    document.querySelector('[data-source="giphy"]').classList.remove('active');
+                    document.querySelector('[data-source="trending"]').classList.remove('active');
                     searchGifs(tag.dataset.keyword);
                 });
             });
