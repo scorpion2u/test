@@ -25,7 +25,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -35,16 +35,52 @@
             background-clip: text;
             color: transparent;
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
         }
 
         .subhead {
             color: #aaa;
             font-size: 0.9rem;
+        }
+
+        /* 代理切换器 */
+        .proxy-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .proxy-label {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .proxy-options {
+            display: flex;
+            gap: 6px;
+        }
+
+        .proxy-btn {
+            background: rgba(255,255,255,0.08);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.15s;
+        }
+
+        .proxy-btn.active {
+            background: #f7971e;
+            color: #1a1a2e;
+            border-color: #f7971e;
+        }
+
+        .proxy-btn:hover {
+            background: rgba(247, 151, 30, 0.3);
         }
 
         /* 搜索框 */
@@ -83,11 +119,6 @@
             padding: 12px 24px;
             border-radius: 40px;
             cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .search-btn:hover {
-            opacity: 0.9;
         }
 
         /* 快捷标签 */
@@ -96,10 +127,7 @@
             flex-wrap: wrap;
             gap: 8px;
             justify-content: center;
-            margin-bottom: 20px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 16px;
         }
 
         .tag {
@@ -109,7 +137,6 @@
             color: #ffd200;
             cursor: pointer;
             border: 1px solid rgba(247, 151, 30, 0.3);
-            transition: 0.15s;
             font-size: 0.9rem;
         }
 
@@ -118,13 +145,12 @@
             color: #1a1a2e;
         }
 
-        /* 状态区 */
+        /* 状态与提示 */
         .status-area {
             text-align: center;
             margin: 15px 0;
             min-height: 32px;
             color: #ccc;
-            font-weight: 500;
         }
 
         .loader {
@@ -141,16 +167,20 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* 提示条 */
         .tip-bar {
             background: rgba(247, 151, 30, 0.1);
             border-radius: 30px;
             padding: 10px 20px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-align: center;
             color: #ffd200;
             font-size: 0.85rem;
-            border: 1px solid rgba(247, 151, 30, 0.2);
+        }
+
+        .error-detail {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 6px;
         }
 
         /* GIF 网格 */
@@ -164,10 +194,9 @@
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
             overflow: hidden;
-            backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.2s;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .gif-card:hover {
@@ -179,16 +208,12 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             background: #1a1838;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .gif-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
         .card-footer {
@@ -196,7 +221,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
         }
 
         .gif-size {
@@ -213,15 +237,6 @@
             font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.15s;
-        }
-
-        .share-btn.wechat {
-            background: #07C160;
-        }
-
-        .share-btn.copy {
-            background: #666;
         }
 
         /* 弹窗 */
@@ -250,20 +265,20 @@
         .modal-title {
             color: white;
             font-size: 1.2rem;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-align: center;
         }
 
         .modal-gif {
             width: 100%;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .modal-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .modal-btn {
@@ -273,31 +288,12 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        .modal-btn.whatsapp {
-            background: #25D366;
-            color: white;
-        }
-
-        .modal-btn.wechat {
-            background: #07C160;
-            color: white;
-        }
-
-        .modal-btn.copy {
-            background: #444;
-            color: white;
-        }
-
-        .modal-btn.download {
-            background: #f7971e;
-            color: #1a1a2e;
-        }
+        .modal-btn.whatsapp { background: #25D366; color: white; }
+        .modal-btn.wechat { background: #07C160; color: white; }
+        .modal-btn.copy { background: #444; color: white; }
+        .modal-btn.download { background: #f7971e; color: #1a1a2e; }
 
         .modal-close {
             margin-top: 16px;
@@ -310,7 +306,6 @@
             width: 100%;
         }
 
-        /* 微信提示 */
         .wechat-note {
             color: #aaa;
             font-size: 0.8rem;
@@ -329,19 +324,28 @@
 <body>
 <div class="app-container">
     <div class="header">
-        <h1>
-            <span>🎬</span> 表情包搜索 <span>✨</span>
-        </h1>
-        <div class="subhead">Tenor · 华人最爱 · 一键分享</div>
+        <h1>🎬 表情包搜索 ✨</h1>
+        <div class="subhead">Tenor · 一键分享到聊天</div>
+    </div>
+
+    <!-- 代理切换器 -->
+    <div class="proxy-bar">
+        <span class="proxy-label">🌐 网络代理：</span>
+        <div class="proxy-options">
+            <span class="proxy-btn active" data-proxy="0">corsproxy.io</span>
+            <span class="proxy-btn" data-proxy="1">allorigins.win</span>
+            <span class="proxy-btn" data-proxy="2">corsproxy.org</span>
+            <span class="proxy-btn" data-proxy="3">直连</span>
+        </div>
     </div>
 
     <!-- 搜索框 -->
     <div class="search-section">
-        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词（支持中文）..." value="开心" autofocus>
+        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词..." value="开心" autofocus>
         <button class="search-btn" id="searchBtn">🔍 搜索</button>
     </div>
 
-    <!-- 快捷标签（符合华人习惯）-->
+    <!-- 快捷标签 -->
     <div class="quick-tags">
         <span class="tag" data-keyword="谢谢">🙏 谢谢</span>
         <span class="tag" data-keyword="早安">🌅 早安</span>
@@ -353,18 +357,11 @@
         <span class="tag" data-keyword="ok">👍 OK</span>
     </div>
 
-    <!-- 提示 -->
-    <div class="tip-bar" id="tipBar">
-        💡 点击 GIF 可选择分享到 WhatsApp / 微信
-    </div>
-
+    <div class="tip-bar" id="tipBar">💡 点击表情包可选择分享方式</div>
     <div class="status-area" id="statusArea"></div>
-
     <div class="gif-grid" id="gifGrid"></div>
 
-    <div class="footer-note">
-        ⚡ 内容来自 Tenor · 支持中文 · 点击直接分享
-    </div>
+    <div class="footer-note">⚡ 内容来自 Tenor · 如遇网络问题请切换上方代理</div>
 </div>
 
 <!-- 分享弹窗 -->
@@ -373,22 +370,12 @@
         <div class="modal-title" id="modalTitle">分享表情包</div>
         <img class="modal-gif" id="modalGif" src="" alt="GIF">
         <div class="modal-actions">
-            <button class="modal-btn whatsapp" id="shareWhatsApp">
-                <span>💬</span> 分享到 WhatsApp
-            </button>
-            <button class="modal-btn wechat" id="shareWeChat">
-                <span>💬</span> 分享到微信（复制链接）
-            </button>
-            <button class="modal-btn copy" id="shareCopy">
-                <span>📋</span> 复制 GIF 链接
-            </button>
-            <button class="modal-btn download" id="shareDownload">
-                <span>⬇️</span> 保存到相册
-            </button>
+            <button class="modal-btn whatsapp" id="shareWhatsApp">💬 分享到 WhatsApp</button>
+            <button class="modal-btn wechat" id="shareWeChat">💬 分享到微信（复制链接）</button>
+            <button class="modal-btn copy" id="shareCopy">📋 复制 GIF 链接</button>
+            <button class="modal-btn download" id="shareDownload">⬇️ 保存到相册</button>
         </div>
-        <div class="wechat-note">
-            ※ 微信需手动粘贴链接到聊天框发送
-        </div>
+        <div class="wechat-note">※ 微信需手动粘贴链接到聊天框</div>
         <button class="modal-close" id="modalClose">取消</button>
     </div>
 </div>
@@ -397,26 +384,30 @@
     (function(){
         "use strict";
 
-        // ========== Tenor API 配置 ==========
+        // Tenor API 配置
         const TENOR_API_KEY = 'LIVDSRZULELA';
         const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
         const LIMIT = 30;
 
-        // 使用 corsproxy.io 代理（相对稳定）
-        const PROXY_URL = 'https://corsproxy.io/?';
+        // 多个 CORS 代理（按顺序尝试）
+        const PROXY_LIST = [
+            { name: 'corsproxy.io', url: 'https://corsproxy.io/?' },
+            { name: 'allorigins.win', url: 'https://api.allorigins.win/raw?url=' },
+            { name: 'corsproxy.org', url: 'https://corsproxy.org/?' },
+            { name: '直连', url: '' }
+        ];
 
+        let currentProxyIndex = 0;
         let currentAbortController = null;
         let currentGifUrl = '';
         let currentGifTitle = '';
 
-        // DOM 元素
+        // DOM
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const statusArea = document.getElementById('statusArea');
         const gifGrid = document.getElementById('gifGrid');
         const tipBar = document.getElementById('tipBar');
-        
-        // 弹窗元素
         const modal = document.getElementById('shareModal');
         const modalGif = document.getElementById('modalGif');
         const modalTitle = document.getElementById('modalTitle');
@@ -434,7 +425,6 @@
             gifGrid.innerHTML = '';
         }
 
-        // 格式化文件大小
         function formatSize(bytes) {
             if (!bytes) return '';
             if (bytes < 1024) return bytes + 'B';
@@ -442,15 +432,55 @@
             return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
         }
 
-        // 获取微信发送建议
-        function getWechatTip(size) {
-            if (!size) return '';
-            if (size < 1024 * 1024) return '✅ 小于1MB，微信可自动播放';
-            if (size < 5 * 1024 * 1024) return '⚠️ 1-5MB，微信需点击播放';
-            return '❌ 超过5MB，微信无法发送';
+        // ========== 切换代理 ==========
+        function switchProxy(index) {
+            currentProxyIndex = index;
+            document.querySelectorAll('.proxy-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            tipBar.innerHTML = `🌐 当前代理：${PROXY_LIST[index].name}。搜索时如失败请尝试切换`;
         }
 
-        // ========== 渲染 GIF 网格 ==========
+        // ========== 尝试用指定代理请求 ==========
+        async function tryFetchWithProxy(url, proxyIndex) {
+            const proxy = PROXY_LIST[proxyIndex];
+            const fetchUrl = proxy.url ? proxy.url + encodeURIComponent(url) : url;
+            
+            console.log(`尝试代理 [${proxy.name}]: ${fetchUrl.substring(0, 80)}...`);
+            
+            const response = await fetch(fetchUrl, { 
+                signal: currentAbortController?.signal 
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            return response.json();
+        }
+
+        // ========== 带自动切换的请求 ==========
+        async function fetchWithAutoProxy(url) {
+            const errors = [];
+            
+            for (let i = 0; i < PROXY_LIST.length; i++) {
+                try {
+                    const data = await tryFetchWithProxy(url, i);
+                    // 成功，更新当前代理
+                    switchProxy(i);
+                    return data;
+                } catch (e) {
+                    if (e.name === 'AbortError') throw e;
+                    errors.push(`${PROXY_LIST[i].name}: ${e.message}`);
+                    console.warn(`代理 ${PROXY_LIST[i].name} 失败:`, e);
+                }
+            }
+            
+            // 所有代理都失败
+            throw new Error(`所有代理均失败\n${errors.join('\n')}`);
+        }
+
+        // ========== 渲染 GIF ==========
         function renderGifs(results, queryTerm = '') {
             clearGrid();
             
@@ -470,7 +500,6 @@
                 if (!gifUrl) return;
                 
                 const title = item.content_description || item.title || 'GIF';
-                const shortTitle = title.length > 12 ? title.slice(0, 10) + '..' : title;
                 
                 const card = document.createElement('div');
                 card.className = 'gif-card';
@@ -491,104 +520,39 @@
                 const sizeSpan = document.createElement('span');
                 sizeSpan.className = 'gif-size';
                 sizeSpan.textContent = formatSize(gifSize);
-                sizeSpan.title = getWechatTip(gifSize);
                 
                 const shareBtn = document.createElement('button');
                 shareBtn.className = 'share-btn';
                 shareBtn.innerHTML = '📤 分享';
                 shareBtn.onclick = (e) => {
                     e.stopPropagation();
-                    openShareModal(gifUrl, title, gifSize);
+                    openShareModal(gifUrl, title);
                 };
                 
                 footer.appendChild(sizeSpan);
                 footer.appendChild(shareBtn);
-                
                 card.appendChild(imgWrapper);
                 card.appendChild(footer);
-                
-                card.onclick = () => openShareModal(gifUrl, title, gifSize);
+                card.onclick = () => openShareModal(gifUrl, title);
                 
                 gifGrid.appendChild(card);
             });
         }
 
         // ========== 打开分享弹窗 ==========
-        function openShareModal(url, title, size) {
+        function openShareModal(url, title) {
             currentGifUrl = url;
             currentGifTitle = title;
-            
             modalGif.src = url;
             modalTitle.textContent = title.length > 30 ? title.slice(0, 28) + '..' : title;
-            
-            // 添加大小提示
-            const sizeText = formatSize(size);
-            const wechatTip = getWechatTip(size);
-            
             modal.style.display = 'flex';
         }
 
-        // ========== 关闭弹窗 ==========
         function closeModal() {
             modal.style.display = 'none';
         }
 
-        // ========== 分享到 WhatsApp ==========
-        function shareToWhatsApp() {
-            const text = encodeURIComponent(`${currentGifTitle}\n${currentGifUrl}`);
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-            tipBar.innerHTML = '✅ 已唤起 WhatsApp，选择联系人即可发送';
-        }
-
-        // ========== 分享到微信（复制链接）==========
-        function shareToWeChat() {
-            navigator.clipboard.writeText(currentGifUrl).then(() => {
-                tipBar.innerHTML = '✅ GIF 链接已复制！打开微信粘贴到聊天框即可发送';
-                closeModal();
-            }).catch(() => {
-                prompt('手动复制以下链接，粘贴到微信：', currentGifUrl);
-            });
-        }
-
-        // ========== 复制链接 ==========
-        function copyLink() {
-            navigator.clipboard.writeText(currentGifUrl).then(() => {
-                tipBar.innerHTML = '✅ 链接已复制到剪贴板';
-                closeModal();
-            }).catch(() => {
-                prompt('手动复制以下链接：', currentGifUrl);
-            });
-        }
-
-        // ========== 下载到相册 ==========
-        async function downloadGif() {
-            try {
-                setStatus('📥 正在下载...');
-                const proxyUrl = PROXY_URL + encodeURIComponent(currentGifUrl);
-                const response = await fetch(proxyUrl);
-                const blob = await response.blob();
-                
-                const a = document.createElement('a');
-                const blobUrl = URL.createObjectURL(blob);
-                a.href = blobUrl;
-                const cleanName = currentGifTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').slice(0, 30);
-                a.download = `${cleanName}.gif`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-                
-                tipBar.innerHTML = '✅ 已保存到相册，可从相册发送到微信/WhatsApp';
-                setStatus('');
-                closeModal();
-            } catch (err) {
-                window.open(currentGifUrl, '_blank');
-                tipBar.innerHTML = '💡 请在新页面长按图片保存';
-                setStatus('');
-            }
-        }
-
-        // ========== 搜索 GIF ==========
+        // ========== 搜索 ==========
         async function searchGifs(query) {
             const trimmedQuery = query.trim();
             if (!trimmedQuery) {
@@ -603,7 +567,7 @@
             
             clearGrid();
             setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
-            tipBar.innerHTML = '💡 搜索中，请稍候...';
+            tipBar.innerHTML = `🌐 正在尝试多个代理...`;
             
             try {
                 const params = new URLSearchParams({
@@ -616,59 +580,97 @@
                 });
                 
                 const apiUrl = `${TENOR_SEARCH_URL}?${params.toString()}`;
-                const proxyUrl = PROXY_URL + encodeURIComponent(apiUrl);
-                
-                const response = await fetch(proxyUrl, { signal: currentAbortController.signal });
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const data = await response.json();
+                const data = await fetchWithAutoProxy(apiUrl);
                 
                 if (currentAbortController.signal.aborted) return;
                 
                 renderGifs(data.results, trimmedQuery);
-                tipBar.innerHTML = '💡 点击表情包可选择分享到 WhatsApp / 微信';
+                tipBar.innerHTML = `✅ 使用 ${PROXY_LIST[currentProxyIndex].name} 成功 · 点击表情包分享`;
                 
             } catch (error) {
                 if (error.name === 'AbortError') return;
                 console.error('搜索失败:', error);
-                setStatus(`⚠️ 搜索失败，请刷新页面重试`);
-                tipBar.innerHTML = '⚠️ 网络问题，请稍后重试';
+                setStatus(`⚠️ 网络请求失败`);
+                tipBar.innerHTML = `❌ 所有代理均失败，请检查网络或稍后重试`;
             } finally {
                 currentAbortController = null;
             }
         }
 
+        // ========== 分享功能 ==========
+        function shareToWhatsApp() {
+            const text = encodeURIComponent(`${currentGifTitle}\n${currentGifUrl}`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+            tipBar.innerHTML = '✅ 已唤起 WhatsApp，选择联系人发送';
+        }
+
+        function shareToWeChat() {
+            navigator.clipboard.writeText(currentGifUrl).then(() => {
+                tipBar.innerHTML = '✅ 链接已复制！打开微信粘贴到聊天框';
+                closeModal();
+            }).catch(() => {
+                prompt('手动复制链接：', currentGifUrl);
+            });
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(currentGifUrl).then(() => {
+                tipBar.innerHTML = '✅ 链接已复制';
+                closeModal();
+            }).catch(() => {
+                prompt('手动复制：', currentGifUrl);
+            });
+        }
+
+        async function downloadGif() {
+            try {
+                setStatus('📥 下载中...');
+                const proxy = PROXY_LIST[currentProxyIndex];
+                const downloadUrl = proxy.url ? proxy.url + encodeURIComponent(currentGifUrl) : currentGifUrl;
+                const response = await fetch(downloadUrl);
+                const blob = await response.blob();
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `${currentGifTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').slice(0, 20)}.gif`;
+                a.click();
+                
+                tipBar.innerHTML = '✅ 已保存到相册';
+                setStatus('');
+                closeModal();
+            } catch (err) {
+                window.open(currentGifUrl, '_blank');
+                tipBar.innerHTML = '💡 请在新页面长按保存';
+                setStatus('');
+            }
+        }
+
         // ========== 初始化 ==========
         function init() {
-            searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
+            // 代理切换
+            document.querySelectorAll('.proxy-btn').forEach((btn, i) => {
+                btn.addEventListener('click', () => switchProxy(i));
+            });
             
+            searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchGifs(searchInput.value);
             });
             
-            // 快捷标签
             document.querySelectorAll('.tag').forEach(tag => {
                 tag.addEventListener('click', () => {
-                    const keyword = tag.dataset.keyword;
-                    searchInput.value = keyword;
-                    searchGifs(keyword);
+                    searchInput.value = tag.dataset.keyword;
+                    searchGifs(tag.dataset.keyword);
                 });
             });
             
-            // 弹窗按钮
             document.getElementById('shareWhatsApp').addEventListener('click', shareToWhatsApp);
             document.getElementById('shareWeChat').addEventListener('click', shareToWeChat);
             document.getElementById('shareCopy').addEventListener('click', copyLink);
             document.getElementById('shareDownload').addEventListener('click', downloadGif);
             document.getElementById('modalClose').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
             
-            // 点击弹窗外部关闭
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-            
-            // 页面加载
             window.addEventListener('load', () => {
                 setTimeout(() => searchGifs('开心'), 100);
             });
