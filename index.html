@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🎬 GIF 搜索 · GIPHY 官方嵌入</title>
+    <title>🎬 表情包搜索 · 一键分享</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,10 +12,10 @@
         }
 
         body {
-            background: linear-gradient(145deg, #121212 0%, #1e1e2f 100%);
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f0c29 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, sans-serif;
-            padding: 20px 16px;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Roboto, sans-serif;
+            padding: 16px 12px 32px;
         }
 
         .app-container {
@@ -25,270 +25,657 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         h1 {
             font-size: 2rem;
-            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .subhead {
             color: #aaa;
-            font-size: 0.95rem;
-        }
-
-        .giphy-container {
-            background: rgba(255,255,255,0.05);
-            border-radius: 24px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .instruction-box {
-            background: linear-gradient(135deg, #00b4db20 0%, #0083b020 100%);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-left: 4px solid #00b4db;
-        }
-
-        .instruction-box h3 {
-            color: #00b4db;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-
-        .instruction-box p {
-            color: #ccc;
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .instruction-box .tip {
-            color: #ffd700;
             font-size: 0.9rem;
-            margin-top: 8px;
         }
 
-        .giphy-embed-wrapper {
-            width: 100%;
-            min-height: 500px;
-            background: #0a0a0f;
+        /* 搜索框 */
+        .search-section {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 5px 5px 5px 22px;
+            border: 1px solid rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto 16px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 14px 6px 14px 0;
+            color: white;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            border: none;
+            color: #1a1a2e;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 快捷标签 */
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tag {
+            background: rgba(247, 151, 30, 0.15);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #ffd200;
+            cursor: pointer;
+            border: 1px solid rgba(247, 151, 30, 0.3);
+            transition: 0.15s;
+            font-size: 0.9rem;
+        }
+
+        .tag:hover {
+            background: #f7971e;
+            color: #1a1a2e;
+        }
+
+        /* 状态区 */
+        .status-area {
+            text-align: center;
+            margin: 15px 0;
+            min-height: 32px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,210,0,0.2);
+            border-top-color: #ffd200;
+            border-radius: 50%;
+            animation: spin 0.8s infinite linear;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 提示条 */
+        .tip-bar {
+            background: rgba(247, 151, 30, 0.1);
+            border-radius: 30px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffd200;
+            font-size: 0.85rem;
+            border: 1px solid rgba(247, 151, 30, 0.2);
+        }
+
+        /* GIF 网格 */
+        .gif-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .gif-card {
+            background: rgba(255,255,255,0.05);
             border-radius: 16px;
             overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.2s;
+            cursor: pointer;
         }
 
-        .giphy-embed {
+        .gif-card:hover {
+            transform: translateY(-4px);
+            border-color: #f7971e;
+        }
+
+        .gif-image-wrapper {
             width: 100%;
-            height: 600px;
-            border: none;
+            aspect-ratio: 1 / 1;
+            background: #1a1838;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gif-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
 
-        .quick-links {
+        .card-footer {
+            padding: 8px 10px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin: 25px 0;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
         }
 
-        .quick-link {
-            background: rgba(0, 180, 219, 0.15);
-            padding: 10px 20px;
-            border-radius: 40px;
-            color: #00b4db;
-            text-decoration: none;
-            border: 1px solid rgba(0, 180, 219, 0.3);
-            transition: 0.2s;
-            font-size: 0.95rem;
+        .gif-size {
+            color: #999;
+            font-size: 0.7rem;
         }
 
-        .quick-link:hover {
-            background: #00b4db;
+        .share-btn {
+            background: #25D366;
+            border: none;
             color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .share-btn.wechat {
+            background: #07C160;
+        }
+
+        .share-btn.copy {
+            background: #666;
+        }
+
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1e1e2f;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #f7971e;
+        }
+
+        .modal-title {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-gif {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 14px;
+            border-radius: 40px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .modal-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .modal-btn.wechat {
+            background: #07C160;
+            color: white;
+        }
+
+        .modal-btn.copy {
+            background: #444;
+            color: white;
+        }
+
+        .modal-btn.download {
+            background: #f7971e;
+            color: #1a1a2e;
+        }
+
+        .modal-close {
+            margin-top: 16px;
+            background: transparent;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 10px;
+            border-radius: 40px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* 微信提示 */
+        .wechat-note {
+            color: #aaa;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 12px;
         }
 
         .footer-note {
-            margin-top: 30px;
+            margin-top: 32px;
             text-align: center;
-            color: #888;
-            font-size: 0.85rem;
-        }
-
-        .footer-note a {
-            color: #00b4db;
-            text-decoration: none;
-        }
-
-        .alt-method {
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
-            border: 1px dashed #555;
-        }
-
-        .alt-method h4 {
-            color: #ddd;
-            margin-bottom: 15px;
-        }
-
-        .alt-method ol {
-            color: #bbb;
-            padding-left: 25px;
-            line-height: 1.8;
-        }
-
-        .alt-method li {
-            margin-bottom: 8px;
-        }
-
-        .copy-btn {
-            background: #333;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
+            color: #777;
             font-size: 0.8rem;
-            margin-left: 10px;
-        }
-
-        .copy-btn:hover {
-            background: #555;
         }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header">
-        <h1>🎬 GIF 搜索宝库</h1>
-        <div class="subhead">GIPHY 官方嵌入 · 无需 API Key · 稳定可靠</div>
+        <h1>
+            <span>🎬</span> 表情包搜索 <span>✨</span>
+        </h1>
+        <div class="subhead">Tenor · 华人最爱 · 一键分享</div>
     </div>
 
-    <!-- 使用说明 -->
-    <div class="instruction-box">
-        <h3>📌 使用说明（三种方式任选）</h3>
-        <p><strong>方式一：</strong>直接在下方 GIPHY 搜索框中输入关键词，点击搜索结果，右键或长按图片选择"保存图片"。</p>
-        <p><strong>方式二：</strong>点击下方快捷链接，直接跳转到 GIPHY 官网对应搜索页面，同样可以下载。</p>
-        <p><strong>方式三：</strong>复制下方的 HTML 代码片段，嵌入到你自己的网页中。</p>
-        <p class="tip">💡 提示：这是 GIPHY 官方提供的嵌入方式，100% 可用，不受任何 API 限制！</p>
+    <!-- 搜索框 -->
+    <div class="search-section">
+        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词（支持中文）..." value="开心" autofocus>
+        <button class="search-btn" id="searchBtn">🔍 搜索</button>
     </div>
 
-    <!-- GIPHY 官方嵌入组件 -->
-    <div class="giphy-container">
-        <div class="giphy-embed-wrapper">
-            <iframe 
-                src="https://giphy.com/embed/trending"
-                width="100%" 
-                height="600" 
-                style="border:none;"
-                class="giphy-embed" 
-                allowfullscreen>
-            </iframe>
-        </div>
+    <!-- 快捷标签（符合华人习惯）-->
+    <div class="quick-tags">
+        <span class="tag" data-keyword="谢谢">🙏 谢谢</span>
+        <span class="tag" data-keyword="早安">🌅 早安</span>
+        <span class="tag" data-keyword="晚安">🌙 晚安</span>
+        <span class="tag" data-keyword="加油">💪 加油</span>
+        <span class="tag" data-keyword="恭喜发财">🧧 恭喜发财</span>
+        <span class="tag" data-keyword="鼓掌">👏 鼓掌</span>
+        <span class="tag" data-keyword="爱心">❤️ 爱心</span>
+        <span class="tag" data-keyword="ok">👍 OK</span>
     </div>
 
-    <!-- 快捷搜索链接 -->
-    <div class="quick-links">
-        <a href="https://giphy.com/search/cute-cat" target="_blank" class="quick-link">😺 猫咪</a>
-        <a href="https://giphy.com/search/happy-dance" target="_blank" class="quick-link">💃 开心舞</a>
-        <a href="https://giphy.com/search/applause" target="_blank" class="quick-link">👏 鼓掌</a>
-        <a href="https://giphy.com/search/thank-you" target="_blank" class="quick-link">🙏 谢谢</a>
-        <a href="https://giphy.com/search/celebration" target="_blank" class="quick-link">🎉 庆祝</a>
-        <a href="https://giphy.com/search/funny-meme" target="_blank" class="quick-link">😂 表情包</a>
-        <a href="https://giphy.com/trending" target="_blank" class="quick-link">🔥 热门趋势</a>
+    <!-- 提示 -->
+    <div class="tip-bar" id="tipBar">
+        💡 点击 GIF 可选择分享到 WhatsApp / 微信
     </div>
 
-    <!-- 替代方案：自定义 HTML 代码 -->
-    <div class="alt-method">
-        <h4>🔧 备选方案：使用这个 HTML 片段嵌入任意 GIF 搜索</h4>
-        <p style="color:#aaa; margin-bottom:15px;">复制以下代码，修改 <code style="background:#333; padding:2px 8px; border-radius:12px;">search-term</code> 为你想要的关键词：</p>
-        
-        <div style="background:#1a1a2e; padding:15px; border-radius:12px; position:relative;">
-            <pre style="color:#00b4db; overflow-x:auto; white-space:pre-wrap; word-break:break-all; font-size:0.85rem; margin:0;">&lt;iframe src="https://giphy.com/embed/search/可爱猫" width="100%" height="400" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</pre>
-            <button class="copy-btn" onclick="copyCode()" style="position:absolute; top:10px; right:10px;">📋 复制</button>
-        </div>
-        
-        <ol style="margin-top:20px;">
-            <li>把上面代码中的 <code>可爱猫</code> 换成你想搜索的关键词（支持中文）</li>
-            <li>把代码粘贴到你的 HTML 文件中</li>
-            <li>保存后打开，就能看到对应关键词的 GIF 搜索结果</li>
-            <li>点击喜欢的 GIF，右键或长按保存到本地</li>
-        </ol>
-        
-        <p style="color:#00b4db; margin-top:15px; font-size:0.9rem;">
-            ⚡ 示例关键词：cute-cat, happy, dance, thank-you, meme, celebration
-        </p>
-    </div>
+    <div class="status-area" id="statusArea"></div>
+
+    <div class="gif-grid" id="gifGrid"></div>
 
     <div class="footer-note">
-        <p>💬 在 GIPHY 中点击 GIF → 右键/长按 → "保存图片" 即可下载到设备</p>
-        <p style="margin-top:12px;">
-            <a href="https://giphy.com" target="_blank">访问 GIPHY 官网</a> · 
-            <a href="#" onclick="changeSearch('cute cat'); return false;">切换搜索词</a>
-        </p>
+        ⚡ 内容来自 Tenor · 支持中文 · 点击直接分享
+    </div>
+</div>
+
+<!-- 分享弹窗 -->
+<div class="modal" id="shareModal">
+    <div class="modal-content">
+        <div class="modal-title" id="modalTitle">分享表情包</div>
+        <img class="modal-gif" id="modalGif" src="" alt="GIF">
+        <div class="modal-actions">
+            <button class="modal-btn whatsapp" id="shareWhatsApp">
+                <span>💬</span> 分享到 WhatsApp
+            </button>
+            <button class="modal-btn wechat" id="shareWeChat">
+                <span>💬</span> 分享到微信（复制链接）
+            </button>
+            <button class="modal-btn copy" id="shareCopy">
+                <span>📋</span> 复制 GIF 链接
+            </button>
+            <button class="modal-btn download" id="shareDownload">
+                <span>⬇️</span> 保存到相册
+            </button>
+        </div>
+        <div class="wechat-note">
+            ※ 微信需手动粘贴链接到聊天框发送
+        </div>
+        <button class="modal-close" id="modalClose">取消</button>
     </div>
 </div>
 
 <script>
-    // 切换嵌入的搜索词
-    function changeSearch(term) {
-        const iframe = document.querySelector('.giphy-embed');
-        const encodedTerm = encodeURIComponent(term);
-        iframe.src = `https://giphy.com/embed/search/${encodedTerm}`;
-    }
+    (function(){
+        "use strict";
 
-    // 复制代码片段
-    function copyCode() {
-        const code = '<iframe src="https://giphy.com/embed/search/可爱猫" width="100%" height="400" frameborder="0" allowfullscreen></iframe>';
-        navigator.clipboard.writeText(code).then(() => {
-            alert('✅ 代码已复制！粘贴到你的 HTML 文件中即可使用。');
-        }).catch(() => {
-            prompt('手动复制以下代码：', code);
-        });
-    }
+        // ========== Tenor API 配置 ==========
+        const TENOR_API_KEY = 'LIVDSRZULELA';
+        const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
+        const LIMIT = 30;
 
-    // 添加快捷搜索功能
-    document.addEventListener('DOMContentLoaded', function() {
-        // 如果用户想自定义搜索，可以添加一个简单的输入框
-        const container = document.querySelector('.giphy-container');
+        // 使用 corsproxy.io 代理（相对稳定）
+        const PROXY_URL = 'https://corsproxy.io/?';
+
+        let currentAbortController = null;
+        let currentGifUrl = '';
+        let currentGifTitle = '';
+
+        // DOM 元素
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const statusArea = document.getElementById('statusArea');
+        const gifGrid = document.getElementById('gifGrid');
+        const tipBar = document.getElementById('tipBar');
         
-        // 添加一个简易的搜索切换器
-        const searchSwitcher = document.createElement('div');
-        searchSwitcher.style.cssText = 'margin-bottom:15px; display:flex; gap:10px; align-items:center; justify-content:center;';
-        searchSwitcher.innerHTML = `
-            <input type="text" id="customSearchInput" placeholder="输入关键词..." 
-                   style="padding:10px 18px; border-radius:30px; border:none; background:rgba(255,255,255,0.1); color:white; width:200px; outline:none;">
-            <button id="customSearchBtn" style="padding:10px 24px; border-radius:30px; border:none; background:#00b4db; color:white; font-weight:bold; cursor:pointer;">搜索</button>
-        `;
-        
-        container.insertBefore(searchSwitcher, container.firstChild);
-        
-        document.getElementById('customSearchBtn').addEventListener('click', function() {
-            const input = document.getElementById('customSearchInput');
-            const term = input.value.trim();
-            if (term) {
-                changeSearch(term);
+        // 弹窗元素
+        const modal = document.getElementById('shareModal');
+        const modalGif = document.getElementById('modalGif');
+        const modalTitle = document.getElementById('modalTitle');
+
+        // ========== 辅助函数 ==========
+        function setStatus(text, isLoading = false) {
+            if (isLoading) {
+                statusArea.innerHTML = `<span class="loader"></span> ${text}`;
+            } else {
+                statusArea.innerHTML = text;
             }
-        });
-        
-        document.getElementById('customSearchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const term = this.value.trim();
-                if (term) {
-                    changeSearch(term);
-                }
+        }
+
+        function clearGrid() {
+            gifGrid.innerHTML = '';
+        }
+
+        // 格式化文件大小
+        function formatSize(bytes) {
+            if (!bytes) return '';
+            if (bytes < 1024) return bytes + 'B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+        }
+
+        // 获取微信发送建议
+        function getWechatTip(size) {
+            if (!size) return '';
+            if (size < 1024 * 1024) return '✅ 小于1MB，微信可自动播放';
+            if (size < 5 * 1024 * 1024) return '⚠️ 1-5MB，微信需点击播放';
+            return '❌ 超过5MB，微信无法发送';
+        }
+
+        // ========== 渲染 GIF 网格 ==========
+        function renderGifs(results, queryTerm = '') {
+            clearGrid();
+            
+            if (!results || results.length === 0) {
+                setStatus(`😕 没有找到 "${queryTerm}" 的相关表情包`);
+                return;
             }
-        });
-    });
+            
+            setStatus(`✅ 找到 ${results.length} 个表情包`);
+            
+            results.forEach(item => {
+                const gifUrl = item.media_formats?.gif?.url || 
+                               item.media_formats?.tinygif?.url;
+                const previewUrl = item.media_formats?.tinygif?.url || gifUrl;
+                const gifSize = item.media_formats?.gif?.size;
+                
+                if (!gifUrl) return;
+                
+                const title = item.content_description || item.title || 'GIF';
+                const shortTitle = title.length > 12 ? title.slice(0, 10) + '..' : title;
+                
+                const card = document.createElement('div');
+                card.className = 'gif-card';
+                
+                const imgWrapper = document.createElement('div');
+                imgWrapper.className = 'gif-image-wrapper';
+                const img = document.createElement('img');
+                img.className = 'gif-img';
+                img.src = previewUrl;
+                img.alt = title;
+                img.loading = 'lazy';
+                
+                imgWrapper.appendChild(img);
+                
+                const footer = document.createElement('div');
+                footer.className = 'card-footer';
+                
+                const sizeSpan = document.createElement('span');
+                sizeSpan.className = 'gif-size';
+                sizeSpan.textContent = formatSize(gifSize);
+                sizeSpan.title = getWechatTip(gifSize);
+                
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'share-btn';
+                shareBtn.innerHTML = '📤 分享';
+                shareBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    openShareModal(gifUrl, title, gifSize);
+                };
+                
+                footer.appendChild(sizeSpan);
+                footer.appendChild(shareBtn);
+                
+                card.appendChild(imgWrapper);
+                card.appendChild(footer);
+                
+                card.onclick = () => openShareModal(gifUrl, title, gifSize);
+                
+                gifGrid.appendChild(card);
+            });
+        }
+
+        // ========== 打开分享弹窗 ==========
+        function openShareModal(url, title, size) {
+            currentGifUrl = url;
+            currentGifTitle = title;
+            
+            modalGif.src = url;
+            modalTitle.textContent = title.length > 30 ? title.slice(0, 28) + '..' : title;
+            
+            // 添加大小提示
+            const sizeText = formatSize(size);
+            const wechatTip = getWechatTip(size);
+            
+            modal.style.display = 'flex';
+        }
+
+        // ========== 关闭弹窗 ==========
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // ========== 分享到 WhatsApp ==========
+        function shareToWhatsApp() {
+            const text = encodeURIComponent(`${currentGifTitle}\n${currentGifUrl}`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+            tipBar.innerHTML = '✅ 已唤起 WhatsApp，选择联系人即可发送';
+        }
+
+        // ========== 分享到微信（复制链接）==========
+        function shareToWeChat() {
+            navigator.clipboard.writeText(currentGifUrl).then(() => {
+                tipBar.innerHTML = '✅ GIF 链接已复制！打开微信粘贴到聊天框即可发送';
+                closeModal();
+            }).catch(() => {
+                prompt('手动复制以下链接，粘贴到微信：', currentGifUrl);
+            });
+        }
+
+        // ========== 复制链接 ==========
+        function copyLink() {
+            navigator.clipboard.writeText(currentGifUrl).then(() => {
+                tipBar.innerHTML = '✅ 链接已复制到剪贴板';
+                closeModal();
+            }).catch(() => {
+                prompt('手动复制以下链接：', currentGifUrl);
+            });
+        }
+
+        // ========== 下载到相册 ==========
+        async function downloadGif() {
+            try {
+                setStatus('📥 正在下载...');
+                const proxyUrl = PROXY_URL + encodeURIComponent(currentGifUrl);
+                const response = await fetch(proxyUrl);
+                const blob = await response.blob();
+                
+                const a = document.createElement('a');
+                const blobUrl = URL.createObjectURL(blob);
+                a.href = blobUrl;
+                const cleanName = currentGifTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').slice(0, 30);
+                a.download = `${cleanName}.gif`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+                
+                tipBar.innerHTML = '✅ 已保存到相册，可从相册发送到微信/WhatsApp';
+                setStatus('');
+                closeModal();
+            } catch (err) {
+                window.open(currentGifUrl, '_blank');
+                tipBar.innerHTML = '💡 请在新页面长按图片保存';
+                setStatus('');
+            }
+        }
+
+        // ========== 搜索 GIF ==========
+        async function searchGifs(query) {
+            const trimmedQuery = query.trim();
+            if (!trimmedQuery) {
+                searchInput.value = '开心';
+                return searchGifs('开心');
+            }
+            
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            currentAbortController = new AbortController();
+            
+            clearGrid();
+            setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
+            tipBar.innerHTML = '💡 搜索中，请稍候...';
+            
+            try {
+                const params = new URLSearchParams({
+                    key: TENOR_API_KEY,
+                    q: trimmedQuery,
+                    limit: LIMIT.toString(),
+                    media_filter: 'gif',
+                    contentfilter: 'medium',
+                    locale: 'zh_CN'
+                });
+                
+                const apiUrl = `${TENOR_SEARCH_URL}?${params.toString()}`;
+                const proxyUrl = PROXY_URL + encodeURIComponent(apiUrl);
+                
+                const response = await fetch(proxyUrl, { signal: currentAbortController.signal });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                if (currentAbortController.signal.aborted) return;
+                
+                renderGifs(data.results, trimmedQuery);
+                tipBar.innerHTML = '💡 点击表情包可选择分享到 WhatsApp / 微信';
+                
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('搜索失败:', error);
+                setStatus(`⚠️ 搜索失败，请刷新页面重试`);
+                tipBar.innerHTML = '⚠️ 网络问题，请稍后重试';
+            } finally {
+                currentAbortController = null;
+            }
+        }
+
+        // ========== 初始化 ==========
+        function init() {
+            searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchGifs(searchInput.value);
+            });
+            
+            // 快捷标签
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    const keyword = tag.dataset.keyword;
+                    searchInput.value = keyword;
+                    searchGifs(keyword);
+                });
+            });
+            
+            // 弹窗按钮
+            document.getElementById('shareWhatsApp').addEventListener('click', shareToWhatsApp);
+            document.getElementById('shareWeChat').addEventListener('click', shareToWeChat);
+            document.getElementById('shareCopy').addEventListener('click', copyLink);
+            document.getElementById('shareDownload').addEventListener('click', downloadGif);
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            
+            // 点击弹窗外部关闭
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            
+            // 页面加载
+            window.addEventListener('load', () => {
+                setTimeout(() => searchGifs('开心'), 100);
+            });
+        }
+
+        init();
+    })();
 </script>
 </body>
 </html>
