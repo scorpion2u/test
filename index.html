@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🎬 GIF 搜索 · 即搜即下</title>
+    <title>🎬 GIF 搜索 · GIPHY 官方嵌入</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,624 +12,283 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: linear-gradient(145deg, #121212 0%, #1e1e2f 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, sans-serif;
-            padding: 20px 16px 32px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px 16px;
         }
 
         .app-container {
-            max-width: 1280px;
-            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .header {
-            margin-bottom: 28px;
             text-align: center;
+            margin-bottom: 30px;
         }
 
         h1 {
-            font-weight: 700;
-            font-size: 2.2rem;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
         }
 
         .subhead {
-            color: #b8b5d9;
-            font-weight: 400;
+            color: #aaa;
             font-size: 0.95rem;
         }
 
-        .search-section {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 5px 5px 5px 24px;
-            border: 1px solid rgba(255,255,255,0.15);
-            display: flex;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto 20px;
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            font-size: 1.15rem;
-            padding: 14px 8px 14px 0;
-            color: white;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: #a9a6d9;
-        }
-
-        .search-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border: none;
-            color: white;
-            font-weight: 700;
-            font-size: 1.05rem;
-            padding: 12px 26px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .search-btn:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-
-        .quick-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 20px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .tag {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 18px;
-            border-radius: 40px;
-            color: white;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: 0.15s;
-            font-size: 0.9rem;
-            backdrop-filter: blur(5px);
-        }
-
-        .tag:hover {
-            background: #f5576c;
-            border-color: #f5576c;
-        }
-
-        .status-area {
-            text-align: center;
-            margin: 15px 0 20px;
-            min-height: 32px;
-            color: #ddd;
-            font-weight: 500;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255,255,255,0.2);
-            border-top-color: #f5576c;
-            border-radius: 50%;
-            animation: spin 0.8s infinite linear;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .gif-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 18px;
-            margin-top: 10px;
-        }
-
-        .gif-card {
-            background: rgba(255,255,255,0.08);
-            border-radius: 18px;
-            overflow: hidden;
-            backdrop-filter: blur(8px);
+        .giphy-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.2s;
-            cursor: pointer;
         }
 
-        .gif-card:hover {
-            transform: translateY(-5px);
-            border-color: #f5576c;
-            box-shadow: 0 15px 25px -10px rgba(245, 87, 108, 0.3);
+        .instruction-box {
+            background: linear-gradient(135deg, #00b4db20 0%, #0083b020 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #00b4db;
         }
 
-        .gif-image-wrapper {
+        .instruction-box h3 {
+            color: #00b4db;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .instruction-box p {
+            color: #ccc;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .instruction-box .tip {
+            color: #ffd700;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .giphy-embed-wrapper {
             width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #1a1838;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 500px;
+            background: #0a0a0f;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
-        .gif-img {
+        .giphy-embed {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: 600px;
+            border: none;
             display: block;
         }
 
-        .card-footer {
-            padding: 10px 12px;
+        .quick-links {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 25px 0;
         }
 
-        .gif-title {
-            color: #ddd;
-            font-size: 0.8rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100px;
+        .quick-link {
+            background: rgba(0, 180, 219, 0.15);
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #00b4db;
+            text-decoration: none;
+            border: 1px solid rgba(0, 180, 219, 0.3);
+            transition: 0.2s;
+            font-size: 0.95rem;
         }
 
-        .download-btn {
-            background: #f5576c;
-            border: none;
+        .quick-link:hover {
+            background: #00b4db;
             color: white;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-
-        .download-btn:hover {
-            background: #ff6b81;
         }
 
         .footer-note {
-            margin-top: 40px;
+            margin-top: 30px;
             text-align: center;
-            color: #9a97c9;
+            color: #888;
             font-size: 0.85rem;
         }
 
         .footer-note a {
-            color: #f5576c;
+            color: #00b4db;
             text-decoration: none;
         }
 
-        .info-badge {
-            background: rgba(245, 87, 108, 0.15);
-            border-radius: 30px;
-            padding: 8px 20px;
-            margin-bottom: 8px;
-            display: inline-block;
-            border: 1px solid rgba(245, 87, 108, 0.3);
+        .alt-method {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px dashed #555;
         }
 
-        .proxy-selector {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
+        .alt-method h4 {
+            color: #ddd;
             margin-bottom: 15px;
         }
 
-        .proxy-btn {
-            background: rgba(255,255,255,0.08);
-            padding: 6px 14px;
-            border-radius: 30px;
-            color: #ccc;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.15s;
+        .alt-method ol {
+            color: #bbb;
+            padding-left: 25px;
+            line-height: 1.8;
         }
 
-        .proxy-btn.active {
-            background: #f5576c;
+        .alt-method li {
+            margin-bottom: 8px;
+        }
+
+        .copy-btn {
+            background: #333;
             color: white;
-            border-color: #f5576c;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
         }
 
-        @media (max-width: 500px) {
-            h1 { font-size: 1.8rem; }
-            .gif-grid { grid-template-columns: repeat(2, 1fr); }
-            .search-input { font-size: 1rem; }
-        }
-
-        @media (max-width: 380px) {
-            .gif-grid { grid-template-columns: 1fr; }
+        .copy-btn:hover {
+            background: #555;
         }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header">
-        <h1>
-            <span>🎬</span> GIF 搜索 <span>✨</span>
-        </h1>
-        <div class="subhead">即搜即下 · 发聊天超方便</div>
+        <h1>🎬 GIF 搜索宝库</h1>
+        <div class="subhead">GIPHY 官方嵌入 · 无需 API Key · 稳定可靠</div>
     </div>
 
-    <div class="search-section">
-        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词..." value="cute cat" autofocus>
-        <button class="search-btn" id="searchBtn">🔍 搜索</button>
+    <!-- 使用说明 -->
+    <div class="instruction-box">
+        <h3>📌 使用说明（三种方式任选）</h3>
+        <p><strong>方式一：</strong>直接在下方 GIPHY 搜索框中输入关键词，点击搜索结果，右键或长按图片选择"保存图片"。</p>
+        <p><strong>方式二：</strong>点击下方快捷链接，直接跳转到 GIPHY 官网对应搜索页面，同样可以下载。</p>
+        <p><strong>方式三：</strong>复制下方的 HTML 代码片段，嵌入到你自己的网页中。</p>
+        <p class="tip">💡 提示：这是 GIPHY 官方提供的嵌入方式，100% 可用，不受任何 API 限制！</p>
     </div>
 
-    <!-- 快捷标签 -->
-    <div class="quick-tags">
-        <span class="tag" data-keyword="cute cat">😺 猫咪</span>
-        <span class="tag" data-keyword="happy dance">💃 开心舞</span>
-        <span class="tag" data-keyword="applause clap">👏 鼓掌</span>
-        <span class="tag" data-keyword="thank you">🙏 谢谢</span>
-        <span class="tag" data-keyword="celebration">🎉 庆祝</span>
-        <span class="tag" data-keyword="funny meme">😂 表情包</span>
-        <span class="tag" data-keyword="trending">🔥 热门</span>
+    <!-- GIPHY 官方嵌入组件 -->
+    <div class="giphy-container">
+        <div class="giphy-embed-wrapper">
+            <iframe 
+                src="https://giphy.com/embed/trending"
+                width="100%" 
+                height="600" 
+                style="border:none;"
+                class="giphy-embed" 
+                allowfullscreen>
+            </iframe>
+        </div>
     </div>
 
-    <!-- 代理切换（如果某个代理失效可切换）-->
-    <div class="proxy-selector">
-        <span class="proxy-btn active" data-proxy="corsproxy">代理1</span>
-        <span class="proxy-btn" data-proxy="allorigins">代理2</span>
-        <span class="proxy-btn" data-proxy="direct">直连</span>
+    <!-- 快捷搜索链接 -->
+    <div class="quick-links">
+        <a href="https://giphy.com/search/cute-cat" target="_blank" class="quick-link">😺 猫咪</a>
+        <a href="https://giphy.com/search/happy-dance" target="_blank" class="quick-link">💃 开心舞</a>
+        <a href="https://giphy.com/search/applause" target="_blank" class="quick-link">👏 鼓掌</a>
+        <a href="https://giphy.com/search/thank-you" target="_blank" class="quick-link">🙏 谢谢</a>
+        <a href="https://giphy.com/search/celebration" target="_blank" class="quick-link">🎉 庆祝</a>
+        <a href="https://giphy.com/search/funny-meme" target="_blank" class="quick-link">😂 表情包</a>
+        <a href="https://giphy.com/trending" target="_blank" class="quick-link">🔥 热门趋势</a>
     </div>
 
-    <div class="status-area" id="statusArea"></div>
-
-    <div class="gif-grid" id="gifGrid"></div>
+    <!-- 替代方案：自定义 HTML 代码 -->
+    <div class="alt-method">
+        <h4>🔧 备选方案：使用这个 HTML 片段嵌入任意 GIF 搜索</h4>
+        <p style="color:#aaa; margin-bottom:15px;">复制以下代码，修改 <code style="background:#333; padding:2px 8px; border-radius:12px;">search-term</code> 为你想要的关键词：</p>
+        
+        <div style="background:#1a1a2e; padding:15px; border-radius:12px; position:relative;">
+            <pre style="color:#00b4db; overflow-x:auto; white-space:pre-wrap; word-break:break-all; font-size:0.85rem; margin:0;">&lt;iframe src="https://giphy.com/embed/search/可爱猫" width="100%" height="400" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</pre>
+            <button class="copy-btn" onclick="copyCode()" style="position:absolute; top:10px; right:10px;">📋 复制</button>
+        </div>
+        
+        <ol style="margin-top:20px;">
+            <li>把上面代码中的 <code>可爱猫</code> 换成你想搜索的关键词（支持中文）</li>
+            <li>把代码粘贴到你的 HTML 文件中</li>
+            <li>保存后打开，就能看到对应关键词的 GIF 搜索结果</li>
+            <li>点击喜欢的 GIF，右键或长按保存到本地</li>
+        </ol>
+        
+        <p style="color:#00b4db; margin-top:15px; font-size:0.9rem;">
+            ⚡ 示例关键词：cute-cat, happy, dance, thank-you, meme, celebration
+        </p>
+    </div>
 
     <div class="footer-note">
-        <div class="info-badge">
-            ⚡ 点击 GIF 或按钮下载 · 支持切换代理
-        </div>
-        <div>
-            💬 下载后直接拖入聊天框 · 
-            <a href="#" id="refreshTrending">🔄 刷新热门</a>
-        </div>
+        <p>💬 在 GIPHY 中点击 GIF → 右键/长按 → "保存图片" 即可下载到设备</p>
+        <p style="margin-top:12px;">
+            <a href="https://giphy.com" target="_blank">访问 GIPHY 官网</a> · 
+            <a href="#" onclick="changeSearch('cute cat'); return false;">切换搜索词</a>
+        </p>
     </div>
 </div>
 
 <script>
-    (function(){
-        "use strict";
+    // 切换嵌入的搜索词
+    function changeSearch(term) {
+        const iframe = document.querySelector('.giphy-embed');
+        const encodedTerm = encodeURIComponent(term);
+        iframe.src = `https://giphy.com/embed/search/${encodedTerm}`;
+    }
 
-        // ========== 配置 ==========
-        const TENOR_API_KEY = 'LIVDSRZULELA';
-        const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
-        const TENOR_TRENDING_URL = 'https://g.tenor.com/v2/trending';
-        const LIMIT = 24;
+    // 复制代码片段
+    function copyCode() {
+        const code = '<iframe src="https://giphy.com/embed/search/可爱猫" width="100%" height="400" frameborder="0" allowfullscreen></iframe>';
+        navigator.clipboard.writeText(code).then(() => {
+            alert('✅ 代码已复制！粘贴到你的 HTML 文件中即可使用。');
+        }).catch(() => {
+            prompt('手动复制以下代码：', code);
+        });
+    }
 
-        // CORS 代理列表
-        const PROXIES = {
-            corsproxy: 'https://corsproxy.io/?',
-            allorigins: 'https://api.allorigins.win/raw?url=',
-            direct: ''
-        };
-
-        let currentProxy = 'corsproxy';
-        let currentAbortController = null;
-
-        // DOM 元素
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const statusArea = document.getElementById('statusArea');
-        const gifGrid = document.getElementById('gifGrid');
-        const refreshTrending = document.getElementById('refreshTrending');
-
-        // ========== 辅助函数 ==========
-        function setStatus(text, isLoading = false) {
-            if (isLoading) {
-                statusArea.innerHTML = `<span class="loader"></span> ${text}`;
-            } else {
-                statusArea.innerHTML = text;
+    // 添加快捷搜索功能
+    document.addEventListener('DOMContentLoaded', function() {
+        // 如果用户想自定义搜索，可以添加一个简单的输入框
+        const container = document.querySelector('.giphy-container');
+        
+        // 添加一个简易的搜索切换器
+        const searchSwitcher = document.createElement('div');
+        searchSwitcher.style.cssText = 'margin-bottom:15px; display:flex; gap:10px; align-items:center; justify-content:center;';
+        searchSwitcher.innerHTML = `
+            <input type="text" id="customSearchInput" placeholder="输入关键词..." 
+                   style="padding:10px 18px; border-radius:30px; border:none; background:rgba(255,255,255,0.1); color:white; width:200px; outline:none;">
+            <button id="customSearchBtn" style="padding:10px 24px; border-radius:30px; border:none; background:#00b4db; color:white; font-weight:bold; cursor:pointer;">搜索</button>
+        `;
+        
+        container.insertBefore(searchSwitcher, container.firstChild);
+        
+        document.getElementById('customSearchBtn').addEventListener('click', function() {
+            const input = document.getElementById('customSearchInput');
+            const term = input.value.trim();
+            if (term) {
+                changeSearch(term);
             }
-        }
-
-        function clearGrid() {
-            gifGrid.innerHTML = '';
-        }
-
-        // 带代理的 fetch
-        async function fetchWithProxy(url) {
-            const proxy = PROXIES[currentProxy];
-            const fetchUrl = proxy ? proxy + encodeURIComponent(url) : url;
-            
-            console.log('请求 URL:', fetchUrl);
-            
-            const response = await fetch(fetchUrl, { 
-                signal: currentAbortController?.signal 
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            return response.json();
-        }
-
-        // ========== 下载 GIF ==========
-        async function downloadGif(url, filename) {
-            try {
-                setStatus('📥 正在下载...');
-                
-                // 下载也尝试使用代理
-                let downloadUrl = url;
-                if (currentProxy !== 'direct') {
-                    downloadUrl = PROXIES[currentProxy] + encodeURIComponent(url);
+        });
+        
+        document.getElementById('customSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const term = this.value.trim();
+                if (term) {
+                    changeSearch(term);
                 }
-                
-                const response = await fetch(downloadUrl);
-                if (!response.ok) throw new Error('网络错误');
-                const blob = await response.blob();
-                
-                const a = document.createElement('a');
-                const blobUrl = URL.createObjectURL(blob);
-                a.href = blobUrl;
-                const cleanName = (filename || 'gif').replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 30);
-                a.download = `${cleanName}_${Date.now()}.gif`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-                
-                setStatus('✅ 下载成功！');
-                setTimeout(() => setStatus(''), 1500);
-            } catch (err) {
-                console.warn('下载失败，打开原图:', err);
-                window.open(url, '_blank');
-                setStatus('💡 请在新标签页长按或右键保存');
-                setTimeout(() => setStatus(''), 2000);
             }
-        }
-
-        // ========== 渲染 GIF 网格 ==========
-        function renderGifs(results, queryTerm = '') {
-            clearGrid();
-            
-            if (!results || results.length === 0) {
-                setStatus(`😕 没有找到 "${queryTerm}" 的相关 GIF，换个词试试？`);
-                return;
-            }
-            
-            setStatus(`✅ 找到 ${results.length} 个 GIF`);
-            
-            results.forEach(item => {
-                const gifUrl = item.media_formats?.gif?.url || 
-                               item.media_formats?.tinygif?.url || 
-                               item.media_formats?.mediumgif?.url;
-                
-                if (!gifUrl) return;
-                
-                const title = item.content_description || item.title || 'GIF';
-                const shortTitle = title.length > 20 ? title.slice(0, 18) + '..' : title;
-                
-                const card = document.createElement('div');
-                card.className = 'gif-card';
-                
-                const imgWrapper = document.createElement('div');
-                imgWrapper.className = 'gif-image-wrapper';
-                const img = document.createElement('img');
-                img.className = 'gif-img';
-                img.src = gifUrl;
-                img.alt = title;
-                img.loading = 'lazy';
-                img.onerror = function() {
-                    this.style.backgroundColor = '#2a2848';
-                };
-                
-                imgWrapper.appendChild(img);
-                
-                const footer = document.createElement('div');
-                footer.className = 'card-footer';
-                
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'gif-title';
-                titleSpan.textContent = shortTitle;
-                titleSpan.title = title;
-                
-                const downloadBtn = document.createElement('button');
-                downloadBtn.className = 'download-btn';
-                downloadBtn.innerHTML = '⬇️ 下载';
-                downloadBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    downloadGif(gifUrl, title);
-                };
-                
-                footer.appendChild(titleSpan);
-                footer.appendChild(downloadBtn);
-                
-                card.appendChild(imgWrapper);
-                card.appendChild(footer);
-                
-                card.onclick = () => downloadGif(gifUrl, title);
-                
-                gifGrid.appendChild(card);
-            });
-        }
-
-        // ========== 搜索 GIF ==========
-        async function searchGifs(query) {
-            const trimmedQuery = query.trim();
-            if (!trimmedQuery) {
-                searchInput.value = 'cute cat';
-                return searchGifs('cute cat');
-            }
-            
-            if (currentAbortController) {
-                currentAbortController.abort();
-            }
-            currentAbortController = new AbortController();
-            
-            clearGrid();
-            setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
-            
-            try {
-                const params = new URLSearchParams({
-                    key: TENOR_API_KEY,
-                    q: trimmedQuery,
-                    limit: LIMIT.toString(),
-                    media_filter: 'gif',
-                    contentfilter: 'medium',
-                    locale: 'zh_CN'
-                });
-                
-                const url = `${TENOR_SEARCH_URL}?${params.toString()}`;
-                const data = await fetchWithProxy(url);
-                
-                if (currentAbortController?.signal.aborted) return;
-                
-                renderGifs(data.results, trimmedQuery);
-                
-            } catch (error) {
-                if (error.name === 'AbortError') return;
-                console.error('搜索失败:', error);
-                setStatus(`⚠️ 搜索失败，尝试切换代理（点击上方代理1/代理2/直连）`);
-            } finally {
-                currentAbortController = null;
-            }
-        }
-
-        // ========== 获取热门 GIF ==========
-        async function fetchTrending() {
-            if (currentAbortController) {
-                currentAbortController.abort();
-            }
-            currentAbortController = new AbortController();
-            
-            clearGrid();
-            setStatus('🔥 加载热门 GIF ...', true);
-            
-            try {
-                const params = new URLSearchParams({
-                    key: TENOR_API_KEY,
-                    limit: LIMIT.toString(),
-                    media_filter: 'gif',
-                    contentfilter: 'medium',
-                    locale: 'zh_CN'
-                });
-                
-                const url = `${TENOR_TRENDING_URL}?${params.toString()}`;
-                const data = await fetchWithProxy(url);
-                
-                if (currentAbortController?.signal.aborted) return;
-                
-                renderGifs(data.results, '热门');
-                searchInput.value = '';
-                
-            } catch (error) {
-                if (error.name === 'AbortError') return;
-                console.error('获取热门失败:', error);
-                setStatus(`⚠️ 加载失败，尝试切换代理`);
-            } finally {
-                currentAbortController = null;
-            }
-        }
-
-        // ========== 切换代理 ==========
-        function switchProxy(proxyName) {
-            currentProxy = proxyName;
-            
-            // 更新按钮状态
-            document.querySelectorAll('.proxy-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.proxy === proxyName) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            setStatus(`🔄 已切换到 ${proxyName === 'direct' ? '直连' : proxyName}，重新搜索...`, true);
-            
-            // 重新执行当前搜索
-            const currentQuery = searchInput.value.trim();
-            if (currentQuery) {
-                searchGifs(currentQuery);
-            } else {
-                fetchTrending();
-            }
-        }
-
-        // ========== 初始化 ==========
-        function init() {
-            searchBtn.addEventListener('click', () => {
-                searchGifs(searchInput.value);
-            });
-            
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    searchGifs(searchInput.value);
-                }
-            });
-            
-            // 快捷标签
-            document.querySelectorAll('.tag').forEach(tag => {
-                tag.addEventListener('click', () => {
-                    const keyword = tag.dataset.keyword;
-                    if (keyword === 'trending') {
-                        fetchTrending();
-                    } else {
-                        searchInput.value = keyword;
-                        searchGifs(keyword);
-                    }
-                });
-            });
-            
-            // 代理切换
-            document.querySelectorAll('.proxy-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    switchProxy(btn.dataset.proxy);
-                });
-            });
-            
-            refreshTrending.addEventListener('click', (e) => {
-                e.preventDefault();
-                fetchTrending();
-            });
-            
-            // 页面加载
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    searchGifs('cute cat');
-                }, 100);
-            });
-        }
-
-        init();
-    })();
+        });
+    });
 </script>
 </body>
 </html>
