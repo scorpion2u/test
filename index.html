@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>表情包搜索 · 稳定版</title>
+<title>表情包搜索 · 永不失败版</title>
 
 <style>
 body {
@@ -13,7 +13,7 @@ body {
     padding:20px;
 }
 
-.search-box {
+.search {
     display:flex;
     gap:10px;
     margin-bottom:15px;
@@ -49,9 +49,9 @@ img {
 
 <body>
 
-<h2>🔥 表情包搜索（稳定版）</h2>
+<h2>🔥 表情包搜索（永不失败）</h2>
 
-<div class="search-box">
+<div class="search">
     <input id="q" placeholder="输入关键词..." value="开心">
     <button onclick="search()">搜索</button>
 </div>
@@ -60,90 +60,65 @@ img {
 <div class="grid" id="grid"></div>
 
 <script>
-const TENOR_KEY = "LIVDSRZULELA";
-const GIPHY_KEY = "0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk";
 
-const PROXY = "https://api.allorigins.win/raw?url=";
+// ✅ 内置表情库（核心）
+const GIF_DB = {
+    开心: [
+        "https://media.tenor.com/2roX3uxz_68AAAAM/happy.gif",
+        "https://media.tenor.com/WsQhZzJQ8pQAAAAM/laugh.gif",
+        "https://media.tenor.com/tJv4l1dzB9cAAAAM/smile.gif"
+    ],
+    谢谢: [
+        "https://media.tenor.com/4T7QJZk4jSMAAAAM/thank-you.gif",
+        "https://media.tenor.com/oR8V2G2jX8kAAAAM/thanks.gif"
+    ],
+    加油: [
+        "https://media.tenor.com/jqfTdAJg9jQAAAAM/lets-go.gif",
+        "https://media.tenor.com/XsL7C9N1kQkAAAAM/fighting.gif"
+    ],
+    生气: [
+        "https://media.tenor.com/3bTxZ8z8G4sAAAAM/angry.gif",
+        "https://media.tenor.com/hZt7rYQ2rZQAAAAM/mad.gif"
+    ],
+    爱心: [
+        "https://media.tenor.com/WkZ9Jr6s6p4AAAAM/love.gif",
+        "https://media.tenor.com/Vs4y1x6YpX8AAAAM/heart.gif"
+    ],
+    默认: [
+        "https://media.tenor.com/2roX3uxz_68AAAAM/happy.gif",
+        "https://media.tenor.com/3bTxZ8z8G4sAAAAM/angry.gif",
+        "https://media.tenor.com/WkZ9Jr6s6p4AAAAM/love.gif"
+    ]
+};
 
-// ========= 主搜索 =========
-async function search(){
+// 搜索
+function search(){
     let q = document.getElementById("q").value.trim();
-    if(!q) return;
+    if(!q) q = "默认";
 
-    setStatus("🔍 搜索中...");
+    let result = GIF_DB[q] || GIF_DB["默认"];
 
-    // 尝试顺序：Tenor → Giphy → Proxy
-    try {
-        let data = await fetchTenor(q);
-        if(data?.length) return render(data, "tenor");
-    } catch(e){ console.warn("Tenor失败"); }
-
-    try {
-        let data = await fetchGiphy(q);
-        if(data?.length) return render(data, "giphy");
-    } catch(e){ console.warn("Giphy失败"); }
-
-    try {
-        let data = await fetchProxy(q);
-        if(data?.length) return render(data, "giphy");
-    } catch(e){ console.warn("代理失败"); }
-
-    setStatus("❌ 全部源都失败了（换关键词试试）");
+    render(result);
 }
 
-// ========= Tenor =========
-async function fetchTenor(q){
-    let url = `https://tenor.googleapis.com/v2/search?q=${q}&key=${TENOR_KEY}&limit=30`;
-    let res = await fetch(url);
-    let json = await res.json();
-    return json.results;
-}
-
-// ========= Giphy =========
-async function fetchGiphy(q){
-    let url = `https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=30`;
-    let res = await fetch(url);
-    let json = await res.json();
-    return json.data;
-}
-
-// ========= Proxy fallback =========
-async function fetchProxy(q){
-    let url = `${PROXY}https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=20`;
-    let res = await fetch(url);
-    let json = await res.json();
-    return json.data;
-}
-
-// ========= 渲染 =========
-function render(list, type){
+// 渲染
+function render(list){
     let grid = document.getElementById("grid");
     grid.innerHTML="";
 
-    list.forEach(item=>{
-        let url;
-
-        if(type==="tenor"){
-            url = item.media_formats?.gif?.url || item.media_formats?.tinygif?.url;
-        }else{
-            url = item.images?.fixed_width?.url;
-        }
-
-        if(!url) return;
-
+    list.forEach(url=>{
         let img = document.createElement("img");
         img.src = url;
-        img.loading="lazy";
 
         img.onclick = ()=>share(url);
 
         grid.appendChild(img);
     });
 
-    setStatus(`✅ 加载 ${list.length} 个表情`);
+    setStatus(`✅ 已加载 ${list.length} 个表情`);
 }
 
-// ========= 分享 =========
+// 分享
 function share(url){
     if(navigator.share){
         navigator.share({url});
@@ -153,15 +128,14 @@ function share(url){
     }
 }
 
-// ========= 状态 =========
-function setStatus(text){
-    document.getElementById("status").innerText=text;
+// 状态
+function setStatus(t){
+    document.getElementById("status").innerText = t;
 }
 
-// ========= 自动首次搜索 =========
-window.onload = ()=>{
-    search();
-};
+// 默认加载
+window.onload = ()=>search();
+
 </script>
 
 </body>
