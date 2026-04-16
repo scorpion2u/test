@@ -111,7 +111,7 @@
         }
 
         .tag {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             padding: 8px 18px;
             border-radius: 40px;
             color: white;
@@ -242,6 +242,30 @@
             border: 1px solid rgba(245, 87, 108, 0.3);
         }
 
+        .proxy-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .proxy-btn {
+            background: rgba(255,255,255,0.08);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: #ccc;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.15s;
+        }
+
+        .proxy-btn.active {
+            background: #f5576c;
+            color: white;
+            border-color: #f5576c;
+        }
+
         @media (max-width: 500px) {
             h1 { font-size: 1.8rem; }
             .gif-grid { grid-template-columns: repeat(2, 1fr); }
@@ -259,15 +283,15 @@
         <h1>
             <span>🎬</span> GIF 搜索 <span>✨</span>
         </h1>
-        <div class="subhead">基于 Tenor API · 即搜即下 · 发聊天超方便</div>
+        <div class="subhead">即搜即下 · 发聊天超方便</div>
     </div>
 
     <div class="search-section">
-        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词（中英文皆可）..." value="cute cat" autofocus>
+        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词..." value="cute cat" autofocus>
         <button class="search-btn" id="searchBtn">🔍 搜索</button>
     </div>
 
-    <!-- 快捷标签（按 Skill 建议的关键词） -->
+    <!-- 快捷标签 -->
     <div class="quick-tags">
         <span class="tag" data-keyword="cute cat">😺 猫咪</span>
         <span class="tag" data-keyword="happy dance">💃 开心舞</span>
@@ -278,13 +302,20 @@
         <span class="tag" data-keyword="trending">🔥 热门</span>
     </div>
 
+    <!-- 代理切换（如果某个代理失效可切换）-->
+    <div class="proxy-selector">
+        <span class="proxy-btn active" data-proxy="corsproxy">代理1</span>
+        <span class="proxy-btn" data-proxy="allorigins">代理2</span>
+        <span class="proxy-btn" data-proxy="direct">直连</span>
+    </div>
+
     <div class="status-area" id="statusArea"></div>
 
     <div class="gif-grid" id="gifGrid"></div>
 
     <div class="footer-note">
         <div class="info-badge">
-            ⚡ 数据来自 Tenor · 内容已过滤 · 点击 GIF 或按钮下载
+            ⚡ 点击 GIF 或按钮下载 · 支持切换代理
         </div>
         <div>
             💬 下载后直接拖入聊天框 · 
@@ -297,12 +328,21 @@
     (function(){
         "use strict";
 
-        // ========== 按照 LobeHub Skill 配置的 Tenor API ==========
-        // API Key: Google 提供的 Tenor 演示密钥（稳定可靠）
+        // ========== 配置 ==========
         const TENOR_API_KEY = 'LIVDSRZULELA';
         const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
         const TENOR_TRENDING_URL = 'https://g.tenor.com/v2/trending';
         const LIMIT = 24;
+
+        // CORS 代理列表
+        const PROXIES = {
+            corsproxy: 'https://corsproxy.io/?',
+            allorigins: 'https://api.allorigins.win/raw?url=',
+            direct: ''
+        };
+
+        let currentProxy = 'corsproxy';
+        let currentAbortController = null;
 
         // DOM 元素
         const searchInput = document.getElementById('searchInput');
@@ -310,8 +350,6 @@
         const statusArea = document.getElementById('statusArea');
         const gifGrid = document.getElementById('gifGrid');
         const refreshTrending = document.getElementById('refreshTrending');
-
-        let currentAbortController = null;
 
         // ========== 辅助函数 ==========
         function setStatus(text, isLoading = false) {
@@ -326,11 +364,36 @@
             gifGrid.innerHTML = '';
         }
 
+        // 带代理的 fetch
+        async function fetchWithProxy(url) {
+            const proxy = PROXIES[currentProxy];
+            const fetchUrl = proxy ? proxy + encodeURIComponent(url) : url;
+            
+            console.log('请求 URL:', fetchUrl);
+            
+            const response = await fetch(fetchUrl, { 
+                signal: currentAbortController?.signal 
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            return response.json();
+        }
+
         // ========== 下载 GIF ==========
         async function downloadGif(url, filename) {
             try {
                 setStatus('📥 正在下载...');
-                const response = await fetch(url);
+                
+                // 下载也尝试使用代理
+                let downloadUrl = url;
+                if (currentProxy !== 'direct') {
+                    downloadUrl = PROXIES[currentProxy] + encodeURIComponent(url);
+                }
+                
+                const response = await fetch(downloadUrl);
                 if (!response.ok) throw new Error('网络错误');
                 const blob = await response.blob();
                 
@@ -366,7 +429,6 @@
             setStatus(`✅ 找到 ${results.length} 个 GIF`);
             
             results.forEach(item => {
-                // 获取 GIF URL
                 const gifUrl = item.media_formats?.gif?.url || 
                                item.media_formats?.tinygif?.url || 
                                item.media_formats?.mediumgif?.url;
@@ -414,7 +476,6 @@
                 card.appendChild(imgWrapper);
                 card.appendChild(footer);
                 
-                // 点击卡片也可以下载
                 card.onclick = () => downloadGif(gifUrl, title);
                 
                 gifGrid.appendChild(card);
@@ -429,7 +490,6 @@
                 return searchGifs('cute cat');
             }
             
-            // 取消之前的请求
             if (currentAbortController) {
                 currentAbortController.abort();
             }
@@ -444,25 +504,21 @@
                     q: trimmedQuery,
                     limit: LIMIT.toString(),
                     media_filter: 'gif',
-                    contentfilter: 'medium',  // 按 Skill 建议，过滤不适当内容
+                    contentfilter: 'medium',
                     locale: 'zh_CN'
                 });
                 
                 const url = `${TENOR_SEARCH_URL}?${params.toString()}`;
-                const response = await fetch(url, { signal: currentAbortController.signal });
+                const data = await fetchWithProxy(url);
                 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (currentAbortController.signal.aborted) return;
+                if (currentAbortController?.signal.aborted) return;
                 
                 renderGifs(data.results, trimmedQuery);
                 
             } catch (error) {
                 if (error.name === 'AbortError') return;
                 console.error('搜索失败:', error);
-                setStatus(`⚠️ 搜索失败，请稍后重试`);
+                setStatus(`⚠️ 搜索失败，尝试切换代理（点击上方代理1/代理2/直连）`);
             } finally {
                 currentAbortController = null;
             }
@@ -488,13 +544,9 @@
                 });
                 
                 const url = `${TENOR_TRENDING_URL}?${params.toString()}`;
-                const response = await fetch(url, { signal: currentAbortController.signal });
+                const data = await fetchWithProxy(url);
                 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (currentAbortController.signal.aborted) return;
+                if (currentAbortController?.signal.aborted) return;
                 
                 renderGifs(data.results, '热门');
                 searchInput.value = '';
@@ -502,20 +554,41 @@
             } catch (error) {
                 if (error.name === 'AbortError') return;
                 console.error('获取热门失败:', error);
-                setStatus(`⚠️ 加载失败，请稍后重试`);
+                setStatus(`⚠️ 加载失败，尝试切换代理`);
             } finally {
                 currentAbortController = null;
             }
         }
 
+        // ========== 切换代理 ==========
+        function switchProxy(proxyName) {
+            currentProxy = proxyName;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.proxy-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.proxy === proxyName) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            setStatus(`🔄 已切换到 ${proxyName === 'direct' ? '直连' : proxyName}，重新搜索...`, true);
+            
+            // 重新执行当前搜索
+            const currentQuery = searchInput.value.trim();
+            if (currentQuery) {
+                searchGifs(currentQuery);
+            } else {
+                fetchTrending();
+            }
+        }
+
         // ========== 初始化 ==========
         function init() {
-            // 搜索按钮
             searchBtn.addEventListener('click', () => {
                 searchGifs(searchInput.value);
             });
             
-            // 回车搜索
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     searchGifs(searchInput.value);
@@ -535,13 +608,19 @@
                 });
             });
             
-            // 刷新热门
+            // 代理切换
+            document.querySelectorAll('.proxy-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchProxy(btn.dataset.proxy);
+                });
+            });
+            
             refreshTrending.addEventListener('click', (e) => {
                 e.preventDefault();
                 fetchTrending();
             });
             
-            // 页面加载时执行默认搜索
+            // 页面加载
             window.addEventListener('load', () => {
                 setTimeout(() => {
                     searchGifs('cute cat');
