@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>表情包搜索 · 永不失败版</title>
+<title>表情包搜索 · 终极版</title>
 
 <style>
 body {
@@ -16,7 +16,7 @@ body {
 .search {
     display:flex;
     gap:10px;
-    margin-bottom:15px;
+    margin-bottom:10px;
 }
 
 input {
@@ -24,14 +24,6 @@ input {
     padding:12px;
     border-radius:10px;
     border:none;
-}
-
-button {
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:orange;
-    cursor:pointer;
 }
 
 .grid {
@@ -43,79 +35,143 @@ button {
 img {
     width:100%;
     border-radius:10px;
+    cursor:pointer;
+}
+
+.tags {
+    margin-bottom:10px;
+}
+
+.tag {
+    display:inline-block;
+    padding:6px 10px;
+    background:#222;
+    margin:4px;
+    border-radius:20px;
+    cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🔥 表情包搜索（永不失败）</h2>
+<h2>🔥 表情包搜索（终极版）</h2>
 
 <div class="search">
     <input id="q" placeholder="输入关键词..." value="开心">
-    <button onclick="search()">搜索</button>
+</div>
+
+<div class="tags">
+    <span class="tag" onclick="quick('开心')">开心</span>
+    <span class="tag" onclick="quick('谢谢')">谢谢</span>
+    <span class="tag" onclick="quick('加油')">加油</span>
+    <span class="tag" onclick="quick('生气')">生气</span>
 </div>
 
 <div id="status"></div>
 <div class="grid" id="grid"></div>
 
 <script>
+const TENOR_KEY = "LIVDSRZULELA";
+const GIPHY_KEY = "0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk";
 
-// ✅ 内置表情库（核心）
-const GIF_DB = {
-    开心: [
+// ✅ 本地库（永不失败）
+const LOCAL_DB = {
+    开心:[
         "https://media.tenor.com/2roX3uxz_68AAAAM/happy.gif",
-        "https://media.tenor.com/WsQhZzJQ8pQAAAAM/laugh.gif",
-        "https://media.tenor.com/tJv4l1dzB9cAAAAM/smile.gif"
+        "https://media.tenor.com/WsQhZzJQ8pQAAAAM/laugh.gif"
     ],
-    谢谢: [
-        "https://media.tenor.com/4T7QJZk4jSMAAAAM/thank-you.gif",
-        "https://media.tenor.com/oR8V2G2jX8kAAAAM/thanks.gif"
+    谢谢:[
+        "https://media.tenor.com/4T7QJZk4jSMAAAAM/thank-you.gif"
     ],
-    加油: [
-        "https://media.tenor.com/jqfTdAJg9jQAAAAM/lets-go.gif",
-        "https://media.tenor.com/XsL7C9N1kQkAAAAM/fighting.gif"
-    ],
-    生气: [
-        "https://media.tenor.com/3bTxZ8z8G4sAAAAM/angry.gif",
-        "https://media.tenor.com/hZt7rYQ2rZQAAAAM/mad.gif"
-    ],
-    爱心: [
-        "https://media.tenor.com/WkZ9Jr6s6p4AAAAM/love.gif",
-        "https://media.tenor.com/Vs4y1x6YpX8AAAAM/heart.gif"
-    ],
-    默认: [
-        "https://media.tenor.com/2roX3uxz_68AAAAM/happy.gif",
-        "https://media.tenor.com/3bTxZ8z8G4sAAAAM/angry.gif",
+    默认:[
         "https://media.tenor.com/WkZ9Jr6s6p4AAAAM/love.gif"
     ]
 };
 
-// 搜索
-function search(){
-    let q = document.getElementById("q").value.trim();
-    if(!q) q = "默认";
+let timer=null;
 
-    let result = GIF_DB[q] || GIF_DB["默认"];
+// 防抖输入
+document.getElementById("q").addEventListener("input", e=>{
+    clearTimeout(timer);
+    timer=setTimeout(()=>search(),400);
+});
 
-    render(result);
+// 快捷
+function quick(t){
+    document.getElementById("q").value=t;
+    search();
 }
 
-// 渲染
+// 超时 fetch
+function fetchTimeout(url, t=5000){
+    return Promise.race([
+        fetch(url),
+        new Promise((_,r)=>setTimeout(()=>r("timeout"),t))
+    ]);
+}
+
+// 主搜索逻辑
+async function search(){
+    let q=document.getElementById("q").value.trim();
+    if(!q) q="默认";
+
+    setStatus("⚡ 本地匹配中...");
+    renderLocal(q);
+
+    // ===== API层 =====
+    setStatus("🌐 云端搜索中...");
+
+    // Tenor
+    try{
+        let r=await fetchTimeout(`https://tenor.googleapis.com/v2/search?q=${q}&key=${TENOR_KEY}&limit=20`);
+        let j=await r.json();
+        if(j.results?.length){
+            return renderTenor(j.results);
+        }
+    }catch(e){console.log("Tenor失败");}
+
+    // Giphy
+    try{
+        let r=await fetchTimeout(`https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=20`);
+        let j=await r.json();
+        if(j.data?.length){
+            return renderGiphy(j.data);
+        }
+    }catch(e){console.log("Giphy失败");}
+
+    setStatus("⚠️ 已使用本地结果（网络受限）");
+}
+
+// ===== 渲染 =====
+function renderLocal(q){
+    let list = LOCAL_DB[q] || LOCAL_DB["默认"];
+    render(list);
+}
+
+function renderTenor(list){
+    let urls=list.map(i=>i.media_formats?.gif?.url).filter(Boolean);
+    render(urls);
+    setStatus("✅ Tenor结果");
+}
+
+function renderGiphy(list){
+    let urls=list.map(i=>i.images?.fixed_width?.url).filter(Boolean);
+    render(urls);
+    setStatus("✅ Giphy结果");
+}
+
 function render(list){
-    let grid = document.getElementById("grid");
+    let grid=document.getElementById("grid");
     grid.innerHTML="";
 
     list.forEach(url=>{
-        let img = document.createElement("img");
-        img.src = url;
-
-        img.onclick = ()=>share(url);
-
+        let img=document.createElement("img");
+        img.src=url;
+        img.loading="lazy";
+        img.onclick=()=>share(url);
         grid.appendChild(img);
     });
-
-    setStatus(`✅ 已加载 ${list.length} 个表情`);
 }
 
 // 分享
@@ -124,18 +180,17 @@ function share(url){
         navigator.share({url});
     }else{
         navigator.clipboard.writeText(url);
-        alert("已复制链接");
+        alert("已复制");
     }
 }
 
 // 状态
 function setStatus(t){
-    document.getElementById("status").innerText = t;
+    document.getElementById("status").innerText=t;
 }
 
-// 默认加载
-window.onload = ()=>search();
-
+// 启动
+window.onload=search;
 </script>
 
 </body>
