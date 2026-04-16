@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🎬 表情包搜索 · 一键分享</title>
+    <title>🎬 表情包搜索 · 稳定代理版</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,7 +25,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         h1 {
@@ -42,48 +42,17 @@
             font-size: 0.9rem;
         }
 
-        /* 代理切换器 */
-        .proxy-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .proxy-label {
-            color: #888;
-            font-size: 0.8rem;
-        }
-
-        .proxy-options {
-            display: flex;
-            gap: 6px;
-        }
-
-        .proxy-btn {
-            background: rgba(255,255,255,0.08);
-            padding: 6px 14px;
+        .proxy-badge {
+            background: rgba(74, 222, 128, 0.15);
             border-radius: 30px;
-            color: #aaa;
+            padding: 6px 16px;
+            display: inline-block;
+            margin-top: 8px;
+            color: #4ade80;
             font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.15s;
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
 
-        .proxy-btn.active {
-            background: #f7971e;
-            color: #1a1a2e;
-            border-color: #f7971e;
-        }
-
-        .proxy-btn:hover {
-            background: rgba(247, 151, 30, 0.3);
-        }
-
-        /* 搜索框 */
         .search-section {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(10px);
@@ -121,7 +90,6 @@
             cursor: pointer;
         }
 
-        /* 快捷标签 */
         .quick-tags {
             display: flex;
             flex-wrap: wrap;
@@ -145,7 +113,6 @@
             color: #1a1a2e;
         }
 
-        /* 状态与提示 */
         .status-area {
             text-align: center;
             margin: 15px 0;
@@ -177,13 +144,6 @@
             font-size: 0.85rem;
         }
 
-        .error-detail {
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 6px;
-        }
-
-        /* GIF 网格 */
         .gif-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -239,7 +199,6 @@
             cursor: pointer;
         }
 
-        /* 弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -325,27 +284,15 @@
 <div class="app-container">
     <div class="header">
         <h1>🎬 表情包搜索 ✨</h1>
-        <div class="subhead">Tenor · 一键分享到聊天</div>
+        <div class="subhead">Tenor API · 私人代理 · 稳定高速</div>
+        <div class="proxy-badge">🟢 代理已连接：project-t90be.vercel.app</div>
     </div>
 
-    <!-- 代理切换器 -->
-    <div class="proxy-bar">
-        <span class="proxy-label">🌐 网络代理：</span>
-        <div class="proxy-options">
-            <span class="proxy-btn active" data-proxy="0">corsproxy.io</span>
-            <span class="proxy-btn" data-proxy="1">allorigins.win</span>
-            <span class="proxy-btn" data-proxy="2">corsproxy.org</span>
-            <span class="proxy-btn" data-proxy="3">直连</span>
-        </div>
-    </div>
-
-    <!-- 搜索框 -->
     <div class="search-section">
         <input type="text" class="search-input" id="searchInput" placeholder="输入关键词..." value="开心" autofocus>
         <button class="search-btn" id="searchBtn">🔍 搜索</button>
     </div>
 
-    <!-- 快捷标签 -->
     <div class="quick-tags">
         <span class="tag" data-keyword="谢谢">🙏 谢谢</span>
         <span class="tag" data-keyword="早安">🌅 早安</span>
@@ -361,10 +308,9 @@
     <div class="status-area" id="statusArea"></div>
     <div class="gif-grid" id="gifGrid"></div>
 
-    <div class="footer-note">⚡ 内容来自 Tenor · 如遇网络问题请切换上方代理</div>
+    <div class="footer-note">⚡ 数据来自 Tenor · 代理稳定运行中</div>
 </div>
 
-<!-- 分享弹窗 -->
 <div class="modal" id="shareModal">
     <div class="modal-content">
         <div class="modal-title" id="modalTitle">分享表情包</div>
@@ -384,25 +330,18 @@
     (function(){
         "use strict";
 
-        // Tenor API 配置
+        // ========== 配置 ==========
         const TENOR_API_KEY = 'LIVDSRZULELA';
         const TENOR_SEARCH_URL = 'https://g.tenor.com/v2/search';
         const LIMIT = 30;
+        
+        // 您的私人代理地址
+        const PROXY_URL = 'https://project-t90be.vercel.app/?url=';
 
-        // 多个 CORS 代理（按顺序尝试）
-        const PROXY_LIST = [
-            { name: 'corsproxy.io', url: 'https://corsproxy.io/?' },
-            { name: 'allorigins.win', url: 'https://api.allorigins.win/raw?url=' },
-            { name: 'corsproxy.org', url: 'https://corsproxy.org/?' },
-            { name: '直连', url: '' }
-        ];
-
-        let currentProxyIndex = 0;
         let currentAbortController = null;
         let currentGifUrl = '';
         let currentGifTitle = '';
 
-        // DOM
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const statusArea = document.getElementById('statusArea');
@@ -432,23 +371,12 @@
             return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
         }
 
-        // ========== 切换代理 ==========
-        function switchProxy(index) {
-            currentProxyIndex = index;
-            document.querySelectorAll('.proxy-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i === index);
-            });
-            tipBar.innerHTML = `🌐 当前代理：${PROXY_LIST[index].name}。搜索时如失败请尝试切换`;
-        }
-
-        // ========== 尝试用指定代理请求 ==========
-        async function tryFetchWithProxy(url, proxyIndex) {
-            const proxy = PROXY_LIST[proxyIndex];
-            const fetchUrl = proxy.url ? proxy.url + encodeURIComponent(url) : url;
+        // ========== 使用私人代理请求 ==========
+        async function fetchWithProxy(url) {
+            const proxyUrl = PROXY_URL + encodeURIComponent(url);
+            console.log('通过私人代理请求:', proxyUrl.substring(0, 100) + '...');
             
-            console.log(`尝试代理 [${proxy.name}]: ${fetchUrl.substring(0, 80)}...`);
-            
-            const response = await fetch(fetchUrl, { 
+            const response = await fetch(proxyUrl, { 
                 signal: currentAbortController?.signal 
             });
             
@@ -457,27 +385,6 @@
             }
             
             return response.json();
-        }
-
-        // ========== 带自动切换的请求 ==========
-        async function fetchWithAutoProxy(url) {
-            const errors = [];
-            
-            for (let i = 0; i < PROXY_LIST.length; i++) {
-                try {
-                    const data = await tryFetchWithProxy(url, i);
-                    // 成功，更新当前代理
-                    switchProxy(i);
-                    return data;
-                } catch (e) {
-                    if (e.name === 'AbortError') throw e;
-                    errors.push(`${PROXY_LIST[i].name}: ${e.message}`);
-                    console.warn(`代理 ${PROXY_LIST[i].name} 失败:`, e);
-                }
-            }
-            
-            // 所有代理都失败
-            throw new Error(`所有代理均失败\n${errors.join('\n')}`);
         }
 
         // ========== 渲染 GIF ==========
@@ -567,7 +474,7 @@
             
             clearGrid();
             setStatus(`🔍 搜索 "${trimmedQuery}" ...`, true);
-            tipBar.innerHTML = `🌐 正在尝试多个代理...`;
+            tipBar.innerHTML = `🌐 通过私人代理请求 Tenor API...`;
             
             try {
                 const params = new URLSearchParams({
@@ -580,18 +487,18 @@
                 });
                 
                 const apiUrl = `${TENOR_SEARCH_URL}?${params.toString()}`;
-                const data = await fetchWithAutoProxy(apiUrl);
+                const data = await fetchWithProxy(apiUrl);
                 
                 if (currentAbortController.signal.aborted) return;
                 
                 renderGifs(data.results, trimmedQuery);
-                tipBar.innerHTML = `✅ 使用 ${PROXY_LIST[currentProxyIndex].name} 成功 · 点击表情包分享`;
+                tipBar.innerHTML = `✅ 搜索成功 · 点击表情包分享`;
                 
             } catch (error) {
                 if (error.name === 'AbortError') return;
                 console.error('搜索失败:', error);
-                setStatus(`⚠️ 网络请求失败`);
-                tipBar.innerHTML = `❌ 所有代理均失败，请检查网络或稍后重试`;
+                setStatus(`⚠️ 请求失败`);
+                tipBar.innerHTML = `❌ 代理可能暂时不可用，请稍后重试`;
             } finally {
                 currentAbortController = null;
             }
@@ -625,9 +532,8 @@
         async function downloadGif() {
             try {
                 setStatus('📥 下载中...');
-                const proxy = PROXY_LIST[currentProxyIndex];
-                const downloadUrl = proxy.url ? proxy.url + encodeURIComponent(currentGifUrl) : currentGifUrl;
-                const response = await fetch(downloadUrl);
+                const proxyUrl = PROXY_URL + encodeURIComponent(currentGifUrl);
+                const response = await fetch(proxyUrl);
                 const blob = await response.blob();
                 
                 const a = document.createElement('a');
@@ -647,11 +553,6 @@
 
         // ========== 初始化 ==========
         function init() {
-            // 代理切换
-            document.querySelectorAll('.proxy-btn').forEach((btn, i) => {
-                btn.addEventListener('click', () => switchProxy(i));
-            });
-            
             searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') searchGifs(searchInput.value);
