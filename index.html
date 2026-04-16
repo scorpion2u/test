@@ -1,672 +1,179 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🎬 表情包搜索 · 稳定版</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>表情包搜索 Pro</title>
 
-        body {
-            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f0c29 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Roboto, sans-serif;
-            padding: 16px 12px 32px;
-        }
+<style>
+body {
+    background: #0f0c29;
+    color: white;
+    font-family: sans-serif;
+    padding: 20px;
+}
 
-        .app-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+}
 
-        h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 6px;
-        }
+button {
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: none;
+    background: orange;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        .subhead {
-            color: #aaa;
-            font-size: 0.9rem;
-        }
+.tabs {
+    margin-bottom: 15px;
+}
 
-        .source-selector {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin: 12px 0;
-        }
+.tabs button {
+    margin-right: 8px;
+}
 
-        .source-btn {
-            background: rgba(255,255,255,0.08);
-            padding: 6px 16px;
-            border-radius: 30px;
-            color: #aaa;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+.active {
+    background: yellow;
+}
 
-        .source-btn.active {
-            background: #f7971e;
-            color: #1a1a2e;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+    gap: 10px;
+}
 
-        .search-section {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 5px 5px 5px 22px;
-            border: 1px solid rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto 16px;
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            font-size: 1.1rem;
-            padding: 14px 6px 14px 0;
-            color: white;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: #888;
-        }
-
-        .search-btn {
-            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-            border: none;
-            color: #1a1a2e;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 12px 24px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-
-        .quick-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .tag {
-            background: rgba(247, 151, 30, 0.15);
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: #ffd200;
-            cursor: pointer;
-            border: 1px solid rgba(247, 151, 30, 0.3);
-            font-size: 0.9rem;
-        }
-
-        .tag:hover {
-            background: #f7971e;
-            color: #1a1a2e;
-        }
-
-        .status-area {
-            text-align: center;
-            margin: 15px 0;
-            min-height: 32px;
-            color: #ccc;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 22px;
-            height: 22px;
-            border: 3px solid rgba(255,210,0,0.2);
-            border-top-color: #ffd200;
-            border-radius: 50%;
-            animation: spin 0.8s infinite linear;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .tip-bar {
-            background: rgba(247, 151, 30, 0.1);
-            border-radius: 30px;
-            padding: 10px 20px;
-            margin-bottom: 16px;
-            text-align: center;
-            color: #ffd200;
-            font-size: 0.85rem;
-        }
-
-        .gif-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 14px;
-        }
-
-        .gif-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .gif-card:hover {
-            transform: translateY(-4px);
-            border-color: #f7971e;
-        }
-
-        .gif-image-wrapper {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #1a1838;
-        }
-
-        .gif-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-footer {
-            padding: 8px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .gif-size {
-            color: #999;
-            font-size: 0.7rem;
-        }
-
-        .share-btn {
-            background: #25D366;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: #1e1e2f;
-            border-radius: 24px;
-            padding: 24px;
-            max-width: 400px;
-            width: 90%;
-            border: 1px solid #f7971e;
-        }
-
-        .modal-title {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .modal-gif {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            padding: 14px;
-            border-radius: 40px;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .modal-btn.whatsapp { background: #25D366; color: white; }
-        .modal-btn.wechat { background: #07C160; color: white; }
-        .modal-btn.copy { background: #444; color: white; }
-        .modal-btn.download { background: #f7971e; color: #1a1a2e; }
-
-        .modal-close {
-            margin-top: 16px;
-            background: transparent;
-            border: 1px solid #555;
-            color: #aaa;
-            padding: 10px;
-            border-radius: 40px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .wechat-note {
-            color: #aaa;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 12px;
-        }
-
-        .footer-note {
-            margin-top: 32px;
-            text-align: center;
-            color: #777;
-            font-size: 0.8rem;
-        }
-    </style>
+.card img {
+    width: 100%;
+    border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
-<div class="app-container">
-    <div class="header">
-        <h1>🎬 表情包搜索 ✨</h1>
-        <div class="subhead">多源切换 · 一键分享</div>
-    </div>
 
-    <!-- 数据源切换 -->
-    <div class="source-selector">
-        <span class="source-btn active" data-source="tenor">Tenor</span>
-        <span class="source-btn" data-source="giphy">GIPHY</span>
-        <span class="source-btn" data-source="trending">🔥 热门推荐</span>
-    </div>
+<h2>🎬 表情包搜索</h2>
 
-    <div class="search-section">
-        <input type="text" class="search-input" id="searchInput" placeholder="输入关键词..." value="开心" autofocus>
-        <button class="search-btn" id="searchBtn">🔍 搜索</button>
-    </div>
-
-    <div class="quick-tags">
-        <span class="tag" data-keyword="谢谢">🙏 谢谢</span>
-        <span class="tag" data-keyword="早安">🌅 早安</span>
-        <span class="tag" data-keyword="晚安">🌙 晚安</span>
-        <span class="tag" data-keyword="加油">💪 加油</span>
-        <span class="tag" data-keyword="恭喜发财">🧧 恭喜发财</span>
-        <span class="tag" data-keyword="鼓掌">👏 鼓掌</span>
-        <span class="tag" data-keyword="爱心">❤️ 爱心</span>
-        <span class="tag" data-keyword="ok">👍 OK</span>
-    </div>
-
-    <div class="tip-bar" id="tipBar">💡 点击表情包可选择分享方式</div>
-    <div class="status-area" id="statusArea"></div>
-    <div class="gif-grid" id="gifGrid"></div>
-
-    <div class="footer-note">⚡ 支持 Tenor / GIPHY · 稳定可用</div>
+<div class="tabs">
+    <button class="active" onclick="setSource('tenor')">Tenor</button>
+    <button onclick="setSource('giphy')">GIPHY</button>
+    <button onclick="loadTrending()">🔥 热门</button>
 </div>
 
-<div class="modal" id="shareModal">
-    <div class="modal-content">
-        <div class="modal-title" id="modalTitle">分享表情包</div>
-        <img class="modal-gif" id="modalGif" src="" alt="GIF">
-        <div class="modal-actions">
-            <button class="modal-btn whatsapp" id="shareWhatsApp">💬 分享到 WhatsApp</button>
-            <button class="modal-btn wechat" id="shareWeChat">💬 分享到微信（复制链接）</button>
-            <button class="modal-btn copy" id="shareCopy">📋 复制 GIF 链接</button>
-            <button class="modal-btn download" id="shareDownload">⬇️ 保存到相册</button>
-        </div>
-        <div class="wechat-note">※ 微信需手动粘贴链接到聊天框</div>
-        <button class="modal-close" id="modalClose">取消</button>
-    </div>
+<div class="search-box">
+    <input id="q" placeholder="输入关键词..." />
+    <button onclick="search()">搜索</button>
 </div>
+
+<div id="status"></div>
+<div class="grid" id="grid"></div>
 
 <script>
-    (function(){
-        "use strict";
+const TENOR_KEY = "LIVDSRZULELA";
+const GIPHY_KEY = "0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk";
 
-        // ========== 配置 ==========
-        const TENOR_API_KEY = 'LIVDSRZULELA';
-        const GIPHY_API_KEY = '0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk';
-        
-        // 公共 CORS 代理（轮换使用）
-        const PROXY_LIST = [
-            'https://corsproxy.io/?',
-            'https://api.allorigins.win/raw?url='
-        ];
+let source = "tenor";
+let debounceTimer = null;
 
-        let currentSource = 'tenor';
-        let currentAbortController = null;
-        let currentGifUrl = '';
-        let currentGifTitle = '';
+// 切换源
+function setSource(s){
+    source = s;
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+    event.target.classList.add("active");
+}
 
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const statusArea = document.getElementById('statusArea');
-        const gifGrid = document.getElementById('gifGrid');
-        const tipBar = document.getElementById('tipBar');
-        const modal = document.getElementById('shareModal');
-        const modalGif = document.getElementById('modalGif');
-        const modalTitle = document.getElementById('modalTitle');
+// 防抖
+document.getElementById("q").addEventListener("input", e=>{
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(()=>{
+        search();
+    },400);
+});
 
-        // ========== 辅助函数 ==========
-        function setStatus(text, isLoading = false) {
-            if (isLoading) {
-                statusArea.innerHTML = `<span class="loader"></span> ${text}`;
-            } else {
-                statusArea.innerHTML = text;
-            }
-        }
+// 搜索
+async function search(){
+    let q = document.getElementById("q").value.trim();
+    if(!q) return;
 
-        function clearGrid() {
-            gifGrid.innerHTML = '';
-        }
+    document.getElementById("status").innerText="搜索中...";
 
-        function formatSize(bytes) {
-            if (!bytes) return '';
-            if (bytes < 1024) return bytes + 'B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
-            return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
-        }
+    let url = "";
 
-        // ========== 切换数据源 ==========
-        function switchSource(source) {
-            currentSource = source;
-            document.querySelectorAll('.source-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.source === source);
-            });
-        }
+    if(source==="tenor"){
+        url = `https://tenor.googleapis.com/v2/search?q=${q}&key=${TENOR_KEY}&limit=30`;
+    }else{
+        url = `https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=30`;
+    }
 
-        // ========== 尝试多个代理请求 ==========
-        async function fetchWithProxy(url) {
-            for (const proxy of PROXY_LIST) {
-                try {
-                    const proxyUrl = proxy + encodeURIComponent(url);
-                    console.log('尝试代理:', proxy.substring(0, 30) + '...');
-                    
-                    const response = await fetch(proxyUrl, { 
-                        signal: currentAbortController?.signal 
-                    });
-                    
-                    if (!response.ok) continue;
-                    
-                    const data = await response.json();
-                    return data;
-                } catch (e) {
-                    console.warn('代理失败:', e.message);
-                    continue;
-                }
-            }
-            throw new Error('所有代理均失败');
-        }
+    let res = await fetch(url);
+    let data = await res.json();
 
-        // ========== 构建 API URL ==========
-        function buildApiUrl(query) {
-            if (currentSource === 'tenor') {
-                const params = new URLSearchParams({
-                    key: TENOR_API_KEY,
-                    q: query,
-                    limit: '30',
-                    media_filter: 'gif',
-                    contentfilter: 'medium'
-                });
-                return `https://g.tenor.com/v2/search?${params.toString()}`;
-            } else if (currentSource === 'giphy') {
-                const params = new URLSearchParams({
-                    api_key: GIPHY_API_KEY,
-                    q: query,
-                    limit: '30',
-                    rating: 'g',
-                    lang: 'zh'
-                });
-                return `https://api.giphy.com/v1/gifs/search?${params.toString()}`;
-            } else {
-                // trending
-                if (currentSource === 'giphy') {
-                    return `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=30&rating=g`;
-                } else {
-                    return `https://g.tenor.com/v2/trending?key=${TENOR_API_KEY}&limit=30&media_filter=gif`;
-                }
-            }
-        }
+    render(data);
+}
 
-        // ========== 解析响应 ==========
-        function parseResults(data) {
-            if (currentSource === 'tenor') {
-                return data.results || [];
-            } else {
-                return data.data || [];
-            }
-        }
+// 热门
+async function loadTrending(){
+    document.getElementById("status").innerText="加载热门...";
 
-        function extractGifInfo(item) {
-            if (currentSource === 'tenor') {
-                return {
-                    url: item.media_formats?.gif?.url || item.media_formats?.tinygif?.url,
-                    preview: item.media_formats?.tinygif?.url,
-                    size: item.media_formats?.gif?.size,
-                    title: item.content_description || item.title || 'GIF'
-                };
-            } else {
-                return {
-                    url: item.images?.fixed_width?.url || item.images?.original?.url,
-                    preview: item.images?.fixed_width_small?.url || item.images?.fixed_width?.url,
-                    size: parseInt(item.images?.fixed_width?.size) || 0,
-                    title: item.title || 'GIF'
-                };
-            }
-        }
+    let url = source==="tenor"
+        ? `https://tenor.googleapis.com/v2/trending?key=${TENOR_KEY}&limit=30`
+        : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=30`;
 
-        // ========== 渲染 GIF ==========
-        function renderGifs(results, queryTerm = '') {
-            clearGrid();
-            
-            if (!results || results.length === 0) {
-                setStatus(`😕 没有找到表情包`);
-                return;
-            }
-            
-            setStatus(`✅ 找到 ${results.length} 个表情包`);
-            
-            results.forEach(item => {
-                const gif = extractGifInfo(item);
-                if (!gif.url) return;
-                
-                const card = document.createElement('div');
-                card.className = 'gif-card';
-                
-                const imgWrapper = document.createElement('div');
-                imgWrapper.className = 'gif-image-wrapper';
-                const img = document.createElement('img');
-                img.className = 'gif-img';
-                img.src = gif.preview || gif.url;
-                img.alt = gif.title;
-                img.loading = 'lazy';
-                
-                imgWrapper.appendChild(img);
-                
-                const footer = document.createElement('div');
-                footer.className = 'card-footer';
-                
-                const sizeSpan = document.createElement('span');
-                sizeSpan.className = 'gif-size';
-                sizeSpan.textContent = formatSize(gif.size);
-                
-                const shareBtn = document.createElement('button');
-                shareBtn.className = 'share-btn';
-                shareBtn.innerHTML = '📤 分享';
-                shareBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    openShareModal(gif.url, gif.title);
-                };
-                
-                footer.appendChild(sizeSpan);
-                footer.appendChild(shareBtn);
-                card.appendChild(imgWrapper);
-                card.appendChild(footer);
-                card.onclick = () => openShareModal(gif.url, gif.title);
-                
-                gifGrid.appendChild(card);
-            });
-        }
+    let res = await fetch(url);
+    let data = await res.json();
 
-        // ========== 打开分享弹窗 ==========
-        function openShareModal(url, title) {
-            currentGifUrl = url;
-            currentGifTitle = title;
-            modalGif.src = url;
-            modalTitle.textContent = title.length > 30 ? title.slice(0, 28) + '..' : title;
-            modal.style.display = 'flex';
-        }
+    render(data);
+}
 
-        function closeModal() {
-            modal.style.display = 'none';
-        }
+// 渲染
+function render(data){
+    let grid = document.getElementById("grid");
+    grid.innerHTML="";
 
-        // ========== 搜索 ==========
-        async function searchGifs(query) {
-            const trimmedQuery = query.trim();
-            if (!trimmedQuery) {
-                searchInput.value = '开心';
-                return searchGifs('开心');
-            }
-            
-            if (currentAbortController) {
-                currentAbortController.abort();
-            }
-            currentAbortController = new AbortController();
-            
-            clearGrid();
-            setStatus(`🔍 搜索中...`, true);
-            tipBar.innerHTML = `🌐 正在从 ${currentSource.toUpperCase()} 获取数据...`;
-            
-            try {
-                const apiUrl = buildApiUrl(trimmedQuery);
-                const data = await fetchWithProxy(apiUrl);
-                
-                if (currentAbortController.signal.aborted) return;
-                
-                const results = parseResults(data);
-                renderGifs(results, trimmedQuery);
-                tipBar.innerHTML = `✅ 搜索成功 · 点击表情包分享`;
-                
-            } catch (error) {
-                if (error.name === 'AbortError') return;
-                console.error('搜索失败:', error);
-                setStatus(`⚠️ 请求失败，尝试切换数据源`);
-                tipBar.innerHTML = `❌ 当前代理不可用，请点击上方切换 Tenor/GIPHY 重试`;
-            } finally {
-                currentAbortController = null;
-            }
-        }
+    let list = source==="tenor" ? data.results : data.data;
 
-        // ========== 分享功能 ==========
-        function shareToWhatsApp() {
-            const text = encodeURIComponent(`${currentGifTitle}\n${currentGifUrl}`);
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-            tipBar.innerHTML = '✅ 已唤起 WhatsApp';
-        }
+    list.forEach(item=>{
+        let url = source==="tenor"
+            ? item.media_formats.gif.url
+            : item.images.fixed_width.url;
 
-        function shareToWeChat() {
-            navigator.clipboard.writeText(currentGifUrl).then(() => {
-                tipBar.innerHTML = '✅ 链接已复制！粘贴到微信即可';
-                closeModal();
-            }).catch(() => prompt('手动复制：', currentGifUrl));
-        }
+        let card = document.createElement("div");
+        card.className="card";
 
-        function copyLink() {
-            navigator.clipboard.writeText(currentGifUrl).then(() => {
-                tipBar.innerHTML = '✅ 链接已复制';
-                closeModal();
-            }).catch(() => prompt('手动复制：', currentGifUrl));
-        }
+        let img = document.createElement("img");
+        img.src = url;
+        img.loading="lazy";
+        img.decoding="async";
 
-        async function downloadGif() {
-            try {
-                setStatus('📥 下载中...');
-                const response = await fetch(currentGifUrl);
-                const blob = await response.blob();
-                
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `${currentGifTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').slice(0, 20)}.gif`;
-                a.click();
-                
-                tipBar.innerHTML = '✅ 已保存';
-                setStatus('');
-                closeModal();
-            } catch (err) {
-                window.open(currentGifUrl, '_blank');
-                tipBar.innerHTML = '💡 请长按保存';
-                setStatus('');
-            }
-        }
+        img.onclick=()=>share(url);
 
-        // ========== 初始化 ==========
-        function init() {
-            // 数据源切换
-            document.querySelectorAll('.source-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    switchSource(btn.dataset.source);
-                    if (btn.dataset.source === 'trending') {
-                        searchInput.value = '';
-                        searchGifs('');
-                    }
-                });
-            });
-            
-            searchBtn.addEventListener('click', () => searchGifs(searchInput.value));
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchGifs(searchInput.value);
-            });
-            
-            document.querySelectorAll('.tag').forEach(tag => {
-                tag.addEventListener('click', () => {
-                    searchInput.value = tag.dataset.keyword;
-                    switchSource('tenor');
-                    document.querySelector('[data-source="tenor"]').classList.add('active');
-                    document.querySelector('[data-source="giphy"]').classList.remove('active');
-                    document.querySelector('[data-source="trending"]').classList.remove('active');
-                    searchGifs(tag.dataset.keyword);
-                });
-            });
-            
-            document.getElementById('shareWhatsApp').addEventListener('click', shareToWhatsApp);
-            document.getElementById('shareWeChat').addEventListener('click', shareToWeChat);
-            document.getElementById('shareCopy').addEventListener('click', copyLink);
-            document.getElementById('shareDownload').addEventListener('click', downloadGif);
-            document.getElementById('modalClose').addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-            
-            window.addEventListener('load', () => {
-                setTimeout(() => searchGifs('开心'), 100);
-            });
-        }
+        card.appendChild(img);
+        grid.appendChild(card);
+    });
 
-        init();
-    })();
+    document.getElementById("status").innerText=`加载 ${list.length} 个`;
+}
+
+// 分享
+function share(url){
+    if(navigator.share){
+        navigator.share({url});
+    }else{
+        navigator.clipboard.writeText(url);
+        alert("已复制链接");
+    }
+}
 </script>
+
 </body>
 </html>
