@@ -3,75 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>表情包搜索 Pro</title>
+<title>表情包搜索 · 稳定版</title>
 
 <style>
 body {
-    background: #0f0c29;
-    color: white;
-    font-family: sans-serif;
-    padding: 20px;
+    background:#0f0c29;
+    color:white;
+    font-family:sans-serif;
+    padding:20px;
 }
 
 .search-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
 }
 
 input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
 }
 
 button {
-    padding: 12px 18px;
-    border-radius: 10px;
-    border: none;
-    background: orange;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.tabs {
-    margin-bottom: 15px;
-}
-
-.tabs button {
-    margin-right: 8px;
-}
-
-.active {
-    background: yellow;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:orange;
+    cursor:pointer;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
-    gap: 10px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    gap:10px;
 }
 
-.card img {
-    width: 100%;
-    border-radius: 10px;
+img {
+    width:100%;
+    border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🎬 表情包搜索</h2>
-
-<div class="tabs">
-    <button class="active" onclick="setSource('tenor')">Tenor</button>
-    <button onclick="setSource('giphy')">GIPHY</button>
-    <button onclick="loadTrending()">🔥 热门</button>
-</div>
+<h2>🔥 表情包搜索（稳定版）</h2>
 
 <div class="search-box">
-    <input id="q" placeholder="输入关键词..." />
+    <input id="q" placeholder="输入关键词..." value="开心">
     <button onclick="search()">搜索</button>
 </div>
 
@@ -82,89 +63,87 @@ button {
 const TENOR_KEY = "LIVDSRZULELA";
 const GIPHY_KEY = "0L3xTl0lJ9lZ4kQqQZ9Q8X5nO3wW2oKk";
 
-let source = "tenor";
-let debounceTimer = null;
+const PROXY = "https://api.allorigins.win/raw?url=";
 
-// 切换源
-function setSource(s){
-    source = s;
-    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-    event.target.classList.add("active");
-}
-
-// 防抖
-document.getElementById("q").addEventListener("input", e=>{
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(()=>{
-        search();
-    },400);
-});
-
-// 搜索
+// ========= 主搜索 =========
 async function search(){
     let q = document.getElementById("q").value.trim();
     if(!q) return;
 
-    document.getElementById("status").innerText="搜索中...";
+    setStatus("🔍 搜索中...");
 
-    let url = "";
+    // 尝试顺序：Tenor → Giphy → Proxy
+    try {
+        let data = await fetchTenor(q);
+        if(data?.length) return render(data, "tenor");
+    } catch(e){ console.warn("Tenor失败"); }
 
-    if(source==="tenor"){
-        url = `https://tenor.googleapis.com/v2/search?q=${q}&key=${TENOR_KEY}&limit=30`;
-    }else{
-        url = `https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=30`;
-    }
+    try {
+        let data = await fetchGiphy(q);
+        if(data?.length) return render(data, "giphy");
+    } catch(e){ console.warn("Giphy失败"); }
 
-    let res = await fetch(url);
-    let data = await res.json();
+    try {
+        let data = await fetchProxy(q);
+        if(data?.length) return render(data, "giphy");
+    } catch(e){ console.warn("代理失败"); }
 
-    render(data);
+    setStatus("❌ 全部源都失败了（换关键词试试）");
 }
 
-// 热门
-async function loadTrending(){
-    document.getElementById("status").innerText="加载热门...";
-
-    let url = source==="tenor"
-        ? `https://tenor.googleapis.com/v2/trending?key=${TENOR_KEY}&limit=30`
-        : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=30`;
-
+// ========= Tenor =========
+async function fetchTenor(q){
+    let url = `https://tenor.googleapis.com/v2/search?q=${q}&key=${TENOR_KEY}&limit=30`;
     let res = await fetch(url);
-    let data = await res.json();
-
-    render(data);
+    let json = await res.json();
+    return json.results;
 }
 
-// 渲染
-function render(data){
+// ========= Giphy =========
+async function fetchGiphy(q){
+    let url = `https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=30`;
+    let res = await fetch(url);
+    let json = await res.json();
+    return json.data;
+}
+
+// ========= Proxy fallback =========
+async function fetchProxy(q){
+    let url = `${PROXY}https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${GIPHY_KEY}&limit=20`;
+    let res = await fetch(url);
+    let json = await res.json();
+    return json.data;
+}
+
+// ========= 渲染 =========
+function render(list, type){
     let grid = document.getElementById("grid");
     grid.innerHTML="";
 
-    let list = source==="tenor" ? data.results : data.data;
-
     list.forEach(item=>{
-        let url = source==="tenor"
-            ? item.media_formats.gif.url
-            : item.images.fixed_width.url;
+        let url;
 
-        let card = document.createElement("div");
-        card.className="card";
+        if(type==="tenor"){
+            url = item.media_formats?.gif?.url || item.media_formats?.tinygif?.url;
+        }else{
+            url = item.images?.fixed_width?.url;
+        }
+
+        if(!url) return;
 
         let img = document.createElement("img");
         img.src = url;
         img.loading="lazy";
-        img.decoding="async";
 
-        img.onclick=()=>share(url);
+        img.onclick = ()=>share(url);
 
-        card.appendChild(img);
-        grid.appendChild(card);
+        grid.appendChild(img);
     });
 
-    document.getElementById("status").innerText=`加载 ${list.length} 个`;
+    setStatus(`✅ 加载 ${list.length} 个表情`);
 }
 
-// 分享
+// ========= 分享 =========
 function share(url){
     if(navigator.share){
         navigator.share({url});
@@ -173,6 +152,16 @@ function share(url){
         alert("已复制链接");
     }
 }
+
+// ========= 状态 =========
+function setStatus(text){
+    document.getElementById("status").innerText=text;
+}
+
+// ========= 自动首次搜索 =========
+window.onload = ()=>{
+    search();
+};
 </script>
 
 </body>
