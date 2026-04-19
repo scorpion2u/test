@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'expense-record-v3'; // 升级版本号强制更新
+const CACHE_NAME = 'expense-record-v5'; // 升级版本号强制更新
 
 const urlsToCache = [
   '/expense-record/',
