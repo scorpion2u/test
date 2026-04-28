@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no">
@@ -13,113 +13,178 @@
   <meta name="apple-mobile-web-app-title" content="PDF工具">
   <link rel="apple-touch-icon" href="icon-192.png">
   
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js">
+  </script>
+  <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js">
+  </script>
+  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js">
+  </script>
   <style>
+    :root {
+      --bg-primary: #f5f7fb;
+      --bg-secondary: #ffffff;
+      --text-primary: #1a2639;
+      --text-secondary: #5b677b;
+      --border-color: #eef2f6;
+      --card-bg: #f9fafc;
+      --button-bg: #f8fafc;
+      --button-hover: #eef2ff;
+      --button-active-bg: #1e293b;
+      --button-active-text: white;
+      --input-bg: #fff;
+      --input-border: #d1d5db;
+      --highlight-bg: #fef3c7;
+      --highlight-border: #fbbf24;
+      --modal-bg: white;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --menu-hover: rgba(0, 0, 0, 0.03);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --card-bg: #1e293b;
+      --button-bg: #334155;
+      --button-hover: #475569;
+      --button-active-bg: #f1f5f9;
+      --button-active-text: #0f172a;
+      --input-bg: #334155;
+      --input-border: #475569;
+      --highlight-bg: #422006;
+      --highlight-border: #854d0e;
+      --modal-bg: #1e293b;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --menu-hover: rgba(255, 255, 255, 0.05);
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-      background: #f5f7fb;
+      background: var(--bg-primary);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 1.5rem;
+      color: var(--text-primary);
+      transition: background 0.3s, color 0.3s;
     }
+
     .container {
-      max-width: 860px;
+      max-width: 900px;
       width: 100%;
-      background: #ffffff;
+      background: var(--bg-secondary);
       border-radius: 2rem;
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 20px 35px var(--shadow);
       padding: 2rem 1.8rem;
+      transition: background 0.3s, box-shadow 0.3s;
     }
+
     h1 {
       font-size: 2rem;
       font-weight: 600;
-      color: #1a2639;
+      color: var(--text-primary);
       margin-bottom: 0.3rem;
     }
+
     .subtitle {
-      color: #5b677b;
+      color: var(--text-secondary);
       margin-bottom: 1.2rem;
       font-size: 0.9rem;
       border-left: 4px solid #3b82f6;
       padding-left: 1rem;
     }
+
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
     }
+
     .top-bar .subtitle {
       margin-bottom: 0;
     }
+
     .menu-container {
       position: relative;
       z-index: 1000;
     }
+
     .menu-button {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      background: white;
+      border: 1px solid var(--input-border);
+      background: var(--button-bg);
       cursor: pointer;
       font-size: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: 0.2s;
+      color: var(--text-primary);
     }
+
     .menu-button:hover {
-      background: #f1f5f9;
+      background: var(--button-hover);
     }
+
     .menu-dropdown {
       position: absolute;
       top: 48px;
       right: 0;
-      background: white;
+      background: var(--modal-bg);
       border-radius: 16px;
       width: 220px;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
       display: none;
       z-index: 1001;
       padding: 4px 0;
-      border: 1px solid rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
     }
+
     .menu-dropdown.show {
       display: block;
     }
+
     .menu-item {
       padding: 12px 16px;
       cursor: pointer;
       font-size: 0.85rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid var(--border-color);
       transition: background 0.1s;
       user-select: none;
+      color: var(--text-primary);
     }
+
     .menu-item:last-child {
       border-bottom: none;
     }
+
     .menu-item:hover {
-      background: rgba(0, 0, 0, 0.03);
+      background: var(--menu-hover);
     }
+
     .menu-item:active {
       background: rgba(0, 0, 0, 0.06);
     }
+
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 0.6rem;
       margin-bottom: 1.8rem;
     }
+
     .tool-btn {
       display: flex;
       flex-direction: column;
@@ -129,87 +194,131 @@
       padding: 0.8rem 0.5rem;
       border-radius: 1.2rem;
       border: 2px solid transparent;
-      background: #f8fafc;
-      color: #475569;
+      background: var(--button-bg);
+      color: var(--text-secondary);
       cursor: pointer;
       font-size: 0.85rem;
       font-weight: 500;
       transition: all 0.2s;
       text-align: center;
     }
+
     .tool-btn .tool-icon {
       font-size: 1.4rem;
       line-height: 1;
     }
+
     .tool-btn .tool-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       line-height: 1;
     }
+
     .tool-btn:hover {
-      background: #eef2ff;
+      background: var(--button-hover);
       border-color: #c7d2fe;
     }
+
     .tool-btn.active {
-      background: #1e293b;
-      color: white;
-      border-color: #1e293b;
+      background: var(--button-active-bg);
+      color: var(--button-active-text);
+      border-color: var(--button-active-bg);
       box-shadow: 0 4px 12px rgba(30, 41, 59, 0.25);
     }
+
     .tool-btn.active:hover {
-      background: #1e293b;
+      background: var(--button-active-bg);
     }
+
     .card {
-      background: #f9fafc;
+      background: var(--card-bg);
       border-radius: 1.5rem;
       padding: 1.5rem;
-      border: 1px solid #eef2f6;
+      border: 1px solid var(--border-color);
+      transition: background 0.3s;
     }
+
     .file-area {
       border: 2px dashed #cbd5e1;
       border-radius: 1.2rem;
       padding: 2rem 1rem;
       text-align: center;
-      background: #fff;
+      background: var(--input-bg);
       transition: 0.2s;
       margin-bottom: 1rem;
       cursor: pointer;
     }
+
     .file-area:hover {
       border-color: #3b82f6;
       background: #f8faff;
     }
+
     .file-area.dragover {
       border-color: #2563eb;
       background: #eef4ff;
     }
+
     .file-input {
       display: none;
     }
+
     .file-icon {
       font-size: 2rem;
       margin-bottom: 0.3rem;
     }
+
     .file-label {
       font-weight: 500;
-      color: #1e293b;
+      color: var(--text-primary);
     }
+
     .file-hint {
-      color: #64748b;
+      color: var(--text-secondary);
       font-size: 0.75rem;
       margin-top: 0.2rem;
     }
+
+    .file-list {
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     .file-list-item {
       display: flex;
       align-items: center;
-      background: white;
+      background: var(--input-bg);
       padding: 0.7rem 1rem;
       border-radius: 1rem;
-      margin: 0.4rem 0;
-      border: 1px solid #e9eef3;
+      border: 1px solid var(--border-color);
       font-size: 0.85rem;
       gap: 0.5rem;
       min-width: 0;
+      transition: all 0.2s ease;
+      cursor: default;
     }
+
+    .file-list-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+
+    .file-list-item.drag-over {
+      border-top: 3px solid #3b82f6;
+      background: var(--button-hover);
+    }
+
+    .file-thumbnail {
+      width: 60px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
     .drag-handle {
       cursor: grab;
       color: #94a3b8;
@@ -218,6 +327,7 @@
       user-select: none;
       flex-shrink: 0;
     }
+
     .file-info {
       display: flex;
       align-items: center;
@@ -226,6 +336,7 @@
       min-width: 0;
       overflow: hidden;
     }
+
     .file-idx {
       background: #e2e8f0;
       color: #475569;
@@ -239,18 +350,21 @@
       font-weight: 700;
       flex-shrink: 0;
     }
+
     .file-name {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       min-width: 0;
     }
+
     .file-size {
       font-size: 0.7rem;
-      color: #64748b;
+      color: var(--text-secondary);
       white-space: nowrap;
       flex-shrink: 0;
     }
+
     .badge {
       display: inline-flex;
       align-items: center;
@@ -261,28 +375,34 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+
     .badge-encrypted {
       background: #fef3c7;
       color: #92400e;
     }
+
     .badge-ok {
       background: #d1fae5;
       color: #065f46;
     }
+
     .badge-error {
       background: #fee2e2;
       color: #b91c1c;
     }
+
     .badge-plain {
       background: #e0e7ff;
       color: #3730a3;
     }
+
     .file-actions {
       display: flex;
       align-items: center;
       gap: 0.4rem;
       flex-shrink: 0;
     }
+
     .pwd-input {
       width: 100px;
       padding: 0.35rem 0.5rem;
@@ -292,9 +412,11 @@
       background: #fffbeb;
       flex-shrink: 0;
     }
+
     .pwd-input.error {
       border-color: #ef4444 !important;
     }
+
     .btn-icon {
       background: none;
       border: none;
@@ -304,9 +426,11 @@
       border-radius: 0.5rem;
       flex-shrink: 0;
     }
+
     .btn-icon:hover {
       background: #fee2e2;
     }
+
     .btn-retry {
       background: #fef2f2;
       border: 1px solid #fecaca;
@@ -317,16 +441,18 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+
     .btn-group {
       display: flex;
       gap: 0.6rem;
       flex-wrap: wrap;
       margin-top: 1rem;
     }
+
     .btn-primary {
-      background: #1e293b;
+      background: var(--button-active-bg);
       border: none;
-      color: white;
+      color: var(--button-active-text);
       padding: 0.6rem 1.5rem;
       border-radius: 2rem;
       font-weight: 500;
@@ -337,43 +463,57 @@
       gap: 0.3rem;
       transition: 0.2s;
     }
+
     .btn-primary:hover {
-      background: #111827;
+      opacity: 0.9;
     }
+
     .btn-danger {
       background: #dc2626;
     }
+
     .btn-danger:hover {
       background: #b91c1c;
     }
+
     .btn-secondary {
-      background: white;
-      border: 1px solid #d1d5db;
-      color: #1f2937;
+      background: var(--button-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-primary);
       padding: 0.6rem 1.2rem;
       border-radius: 2rem;
       font-weight: 500;
       cursor: pointer;
       font-size: 0.85rem;
+      transition: 0.2s;
     }
+
+    .btn-secondary:hover {
+      background: var(--button-hover);
+    }
+
     .password-section {
       margin-top: 0.8rem;
       display: flex;
       gap: 0.5rem;
       align-items: center;
       flex-wrap: wrap;
-      background: #fef3c7;
+      background: var(--highlight-bg);
       padding: 0.7rem 1rem;
       border-radius: 1rem;
-      border: 1px solid #fbbf24;
+      border: 1px solid var(--highlight-border);
     }
+
     .password-input {
       padding: 0.5rem 0.8rem;
       border-radius: 2rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--input-border);
       flex: 1;
       min-width: 120px;
+      background: var(--input-bg);
+      color: var(--text-primary);
     }
+
     .toggle-pwd {
       background: none;
       border: none;
@@ -381,6 +521,7 @@
       font-size: 0.85rem;
       color: #3b82f6;
     }
+
     .info-box {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
@@ -391,6 +532,7 @@
       color: #1e40af;
       line-height: 1.5;
     }
+
     .highlight-box {
       background: #fefce8;
       border: 2px solid #facc15;
@@ -402,6 +544,20 @@
       gap: 0.6rem;
       align-items: flex-start;
     }
+
+    .warning-box {
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+      border-radius: 1rem;
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+      font-size: 0.8rem;
+      display: none;
+      gap: 0.6rem;
+      align-items: flex-start;
+      color: #b91c1c;
+    }
+
     .progress-bar-wrap {
       width: 100%;
       height: 8px;
@@ -410,6 +566,7 @@
       margin-top: 0.8rem;
       overflow: hidden;
     }
+
     .progress-bar-fill {
       height: 100%;
       background: #3b82f6;
@@ -417,6 +574,7 @@
       transition: width 0.3s;
       width: 0%;
     }
+
     .status {
       margin-top: 0.8rem;
       font-size: 0.85rem;
@@ -424,18 +582,22 @@
       border-radius: 2rem;
       display: inline-block;
     }
+
     .status-info {
       color: #2563eb;
       background: #eef4ff;
     }
+
     .status-warn {
       color: #b45309;
       background: #fffbeb;
     }
+
     .status-success {
       color: #059669;
       background: #ecfdf5;
     }
+
     .same-pwd-row {
       display: flex;
       align-items: center;
@@ -443,36 +605,46 @@
       margin-top: 0.6rem;
       font-size: 0.8rem;
     }
+
     .same-pwd-row input[type="checkbox"] {
       accent-color: #3b82f6;
     }
+
     .quality-selector {
       display: flex;
       align-items: center;
       gap: 0.8rem;
       margin-top: 0.8rem;
       flex-wrap: wrap;
-      background: #f8fafc;
+      background: var(--button-bg);
       padding: 0.6rem 1rem;
       border-radius: 1rem;
       font-size: 0.8rem;
     }
+
     .quality-selector label {
       font-weight: 500;
       white-space: nowrap;
     }
+
     .quality-selector select {
       padding: 0.4rem 0.8rem;
       border-radius: 2rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--input-border);
       font-size: 0.8rem;
+      background: var(--input-bg);
+      color: var(--text-primary);
     }
+
     select {
       padding: 0.5rem;
       border-radius: 2rem;
-      border: 1px solid #ccc;
+      border: 1px solid var(--input-border);
       font-size: 0.85rem;
+      background: var(--input-bg);
+      color: var(--text-primary);
     }
+
     .output-format-row {
       display: flex;
       gap: 0.8rem;
@@ -480,10 +652,79 @@
       flex-wrap: wrap;
       margin-top: 0.8rem;
     }
+
     .output-format-row label {
       font-weight: 500;
       font-size: 0.85rem;
     }
+
+    .watermark-section {
+      margin-top: 0.8rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--button-bg);
+      padding: 0.7rem 1rem;
+      border-radius: 1rem;
+    }
+
+    .watermark-section input[type="text"] {
+      padding: 0.5rem 0.8rem;
+      border-radius: 2rem;
+      border: 1px solid var(--input-border);
+      flex: 1;
+      min-width: 120px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+    }
+
+    .watermark-section input[type="range"] {
+      width: 80px;
+    }
+
+    .result-card {
+      background: var(--button-bg);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      text-align: center;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-savings {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #059669;
+    }
+
+    @media (max-width: 768px) {
+      .tools-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.4rem;
+      }
+      .tool-btn {
+        padding: 0.6rem 0.3rem;
+      }
+      .tool-btn .tool-icon {
+        font-size: 1.2rem;
+      }
+      .tool-btn .tool-label {
+        font-size: 0.6rem;
+      }
+    }
+
     @media (max-width: 600px) {
       .container {
         padding: 1.2rem 0.8rem;
@@ -511,6 +752,8 @@
       <div class="menu-container" id="menuContainer">
         <button class="menu-button" id="menuButton" aria-label="菜单">☰</button>
         <div class="menu-dropdown" id="menuDropdown">
+          <div class="menu-item" id="themeToggleItem">🌓 切换主题</div>
+          <div class="menu-item" id="historyMenuItem">📜 操作历史</div>
           <div class="menu-item" id="installAppBtn">📱 安装应用</div>
           <div class="menu-item" id="languageMenuItem">🌐 语言 / Language</div>
         </div>
@@ -527,6 +770,8 @@
       <button class="tool-btn" data-tool="extractPages"><span class="tool-icon">📑</span><span class="tool-label">提取页面</span></button>
       <button class="tool-btn" data-tool="pdfToImages"><span class="tool-icon">🔄</span><span class="tool-label">PDF转图片</span></button>
       <button class="tool-btn" data-tool="imagesToPdf"><span class="tool-icon">📸</span><span class="tool-label">图片转PDF</span></button>
+      <button class="tool-btn" data-tool="watermark"><span class="tool-icon">💧</span><span class="tool-label">添加水印</span></button>
+      <button class="tool-btn" data-tool="organize"><span class="tool-icon">🗂️</span><span class="tool-label">整理页面</span></button>
     </div>
 
     <div class="card" id="toolCard"></div>
@@ -535,6 +780,7 @@
 
   <script>
     (function() {
+      // 设置 PDF.js worker
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
       // ==================== 多语言 ====================
@@ -550,9 +796,12 @@
           extractPages: '提取页面',
           pdfToImages: 'PDF转图片',
           imagesToPdf: '图片转PDF',
+          organize: '整理页面',
+          watermark: '添加水印',
           installApp: '📱 安装应用',
-          downloadApk: '📦 下载APK',
           language: '🌐 语言 / Language',
+          themeToggle: '🌓 切换主题',
+          history: '📜 操作历史',
           installedApp: '✅ 已安装应用',
           addToHome: '📱 添加到主屏幕',
           selectFile: '选择一个PDF文件',
@@ -575,6 +824,10 @@
           removePwdInfo: '导出无密码保护的PDF，内容完整保留。',
           startRemovePwd: '🔓 删除密码并导出',
           compressLabel: '📦 压缩PDF',
+          compressMode: '压缩模式：',
+          balanced: '平衡',
+          rasterize: '极致压缩',
+          rasterizeWarning: '⚠️ 极致压缩会将PDF转为图片，文字可能变模糊',
           clarity: '🔍 清晰度：',
           sd: '标清',
           hd: '高清',
@@ -582,7 +835,6 @@
           quality: '📦 质量：',
           maxCompress: '最大压缩',
           saveSpace: '节省空间',
-          balanced: '平衡',
           highQuality: '高质量',
           startCompress: '📦 压缩PDF',
           extractImagesBtn: '🖼️ 提取图片',
@@ -611,6 +863,8 @@
           compressSuccess: '压缩完成',
           convertSuccess: '转换完成',
           composeSuccess: '合成完成',
+          organizeSuccess: '整理完成',
+          watermarkSuccess: '水印添加完成',
           noFile: '请先选择文件',
           processing: '正在处理...',
           generating: '生成PDF...',
@@ -642,8 +896,23 @@
           selectPdfExtractPages: '选择一个PDF提取页面',
           selectPdfToImages: '选择一个PDF转为图片',
           selectImagesToPdf: '选择图片合成PDF',
+          selectPdfWatermark: '选择一个PDF添加水印',
+          selectPdfOrganize: '选择一个PDF整理页面',
           atLeast2: '至少需要2个PDF',
-          invalidFile: '请选择PDF文件'
+          invalidFile: '请选择PDF文件',
+          watermarkText: '水印文字：',
+          watermarkPlaceholder: '如：机密文件',
+          startWatermark: '💧 添加水印',
+          rotateAll: '🔄 全部旋转90°',
+          deleteSelected: '🗑️ 删除选中',
+          exportOrganized: '📄 导出新PDF',
+          originalSize: '原文件大小',
+          newSize: '处理后大小',
+          saved: '已节省',
+          noHistory: '暂无操作历史',
+          clearHistory: '清空历史',
+          pdfLoaded: 'PDF加载完成',
+          downloadAll: '📦 打包下载全部',
         },
         'en-US': {
           menuTitle: '📄 PDF Toolkit',
@@ -656,9 +925,12 @@
           extractPages: 'Extract Pages',
           pdfToImages: 'PDF to Images',
           imagesToPdf: 'Images to PDF',
+          organize: 'Organize Pages',
+          watermark: 'Add Watermark',
           installApp: '📱 Install App',
-          downloadApk: '📦 Download APK',
           language: '🌐 Language',
+          themeToggle: '🌓 Toggle Theme',
+          history: '📜 History',
           installedApp: '✅ Installed',
           addToHome: '📱 Add to Home',
           selectFile: 'Select a PDF file',
@@ -681,6 +953,10 @@
           removePwdInfo: 'Export password-free PDF, content preserved.',
           startRemovePwd: '🔓 Remove Password & Export',
           compressLabel: '📦 Compress PDF',
+          compressMode: 'Mode: ',
+          balanced: 'Balanced',
+          rasterize: 'Maximum',
+          rasterizeWarning: '⚠️ Maximum compression will rasterize text',
           clarity: '🔍 Clarity: ',
           sd: 'SD',
           hd: 'HD',
@@ -688,7 +964,6 @@
           quality: '📦 Quality: ',
           maxCompress: 'Max',
           saveSpace: 'Space Save',
-          balanced: 'Balanced',
           highQuality: 'High',
           startCompress: '📦 Compress PDF',
           extractImagesBtn: '🖼️ Extract Images',
@@ -717,6 +992,8 @@
           compressSuccess: 'Compress Complete',
           convertSuccess: 'Convert Complete',
           composeSuccess: 'Compose Complete',
+          organizeSuccess: 'Organize Complete',
+          watermarkSuccess: 'Watermark Added',
           noFile: 'Please select files',
           processing: 'Processing...',
           generating: 'Generating PDF...',
@@ -748,8 +1025,23 @@
           selectPdfExtractPages: 'Select a PDF to extract pages',
           selectPdfToImages: 'Select a PDF to convert',
           selectImagesToPdf: 'Select images to compose',
+          selectPdfWatermark: 'Select a PDF to watermark',
+          selectPdfOrganize: 'Select a PDF to organize',
           atLeast2: 'At least 2 PDFs required',
-          invalidFile: 'Please select PDF files'
+          invalidFile: 'Please select PDF files',
+          watermarkText: 'Watermark text: ',
+          watermarkPlaceholder: 'e.g. Confidential',
+          startWatermark: '💧 Add Watermark',
+          rotateAll: '🔄 Rotate All 90°',
+          deleteSelected: '🗑️ Delete Selected',
+          exportOrganized: '📄 Export PDF',
+          originalSize: 'Original Size',
+          newSize: 'New Size',
+          saved: 'Saved',
+          noHistory: 'No history yet',
+          clearHistory: 'Clear History',
+          pdfLoaded: 'PDF Loaded',
+          downloadAll: '📦 Download All as ZIP',
         }
       };
 
@@ -769,117 +1061,90 @@
         return LANGUAGES[currentLang]?.[key] || LANGUAGES['zh-CN'][key] || key;
       }
 
-      function updateAllTexts() {
-        document.querySelector('h1').textContent = t('menuTitle');
-        document.querySelector('.subtitle').textContent = t('subtitle');
-        const labels = ['removePassword', 'split', 'merge', 'compress', 'extract', 'extractPages', 'pdfToImages',
-          'imagesToPdf'
-        ];
-        document.querySelectorAll('.tool-btn .tool-label').forEach((el, i) => {
-          if (i < labels.length) el.textContent = t(labels[i]);
-        });
-        updateMenuLanguage();
-        renderToolUI();
-      }
-
-      function updateMenuLanguage() {
-        const ib = document.getElementById('installAppBtn');
-        if (ib) ib.textContent = isRunningAsPWA() ? t('installedApp') : (window._deferredPrompt ? t(
-          'installApp') : t('addToHome'));
-        const lb = document.getElementById('languageMenuItem');
-        if (lb) lb.textContent = t('language');
-      }
-
-      function isRunningAsPWA() {
-        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      }
-
-      function detectBrowser() {
-        const ua = navigator.userAgent;
-        if (/Edg/.test(ua)) return 'edge';
-        if (/Chrome/.test(ua) && /Google Inc/.test(navigator.vendor)) return 'chrome';
-        if (/Safari/.test(ua) && !/Chrome/.test(ua)) return 'safari';
-        if (/iPhone|iPad|iPod/.test(ua)) return 'ios';
-        return 'other';
-      }
-
-      function showModal(title, html) {
-        const overlay = document.createElement('div');
-        overlay.style.cssText =
-          'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
-        overlay.innerHTML =
-          `<div style="background:white;border-radius:20px;padding:24px;max-width:380px;width:90%;"><h3 style="margin-bottom:12px;">${title}</h3>${html}<button id="modalCloseBtn" style="margin-top:12px;width:100%;padding:10px;border:none;border-radius:20px;background:#1e293b;color:white;cursor:pointer;font-size:0.9rem;">${t('gotIt')}</button></div>`;
-        document.body.appendChild(overlay);
-        overlay.querySelector('#modalCloseBtn').onclick = () => overlay.remove();
-        overlay.onclick = (e) => {
-          if (e.target === overlay) overlay.remove();
-        };
-      }
-
-      function installPWA() {
-        if (isRunningAsPWA()) {
-          showModal(t('installTitle'),
-            `<div style="text-align:center;padding:12px;"><div style="font-size:40px;">📱</div><p>${t('usingInstalled')}</p><p style="font-size:0.8rem;color:#64748b;">${t('runningStandalone')}</p></div>`
-            );
-          return;
+      // ==================== 历史记录 ====================
+      class HistoryManager {
+        constructor() {
+          this.key = 'pdf-tool-history';
+          this.maxItems = 20;
         }
-        if (!window._deferredPrompt) {
-          const b = detectBrowser();
-          let h = '';
-          if (b === 'chrome' || b === 'edge') h =
-            `<p style="font-weight:500;">${t('chromeSteps')}</p><p>1. ${t('step1chrome')}</p><p>2. ${t('step2chrome')}</p>`;
-          else if (b === 'ios' || b === 'safari') h =
-            `<p style="font-weight:500;">${t('iosSteps')}</p><p>1. ${t('step1ios')}</p><p>2. ${t('step2ios')}</p>`;
-          else h = `<p>${t('browserNotSupport')}</p><p style="font-size:0.8rem;">${t('suggestBrowser')}</p>`;
-          showModal(t('installTitle'), h);
-          return;
-        }
-        window._deferredPrompt.prompt();
-        window._deferredPrompt = null;
-        updateMenuLanguage();
-      }
-
-      function showLanguageSelector() {
-        const html =
-          `<div style="margin-bottom:12px;padding:10px;background:rgba(0,0,0,0.04);border-radius:12px;text-align:center;"><div style="font-size:0.8rem;color:#64748b;">${t('currentLanguage')}</div><div style="font-size:1.2rem;font-weight:600;">${currentLang==='zh-CN'?'简体中文':'English'}</div></div><div style="display:flex;flex-direction:column;gap:8px;"><div class="lopt" data-l="zh-CN" style="padding:14px;border-radius:12px;cursor:pointer;border:2px solid ${currentLang==='zh-CN'?'#1e293b':'transparent'};background:${currentLang==='zh-CN'?'rgba(30,41,59,0.05)':'rgba(0,0,0,0.02)'};">🇨🇳 ${t('simplifiedChinese')} ${currentLang==='zh-CN'?'✓':''}</div><div class="lopt" data-l="en-US" style="padding:14px;border-radius:12px;cursor:pointer;border:2px solid ${currentLang==='en-US'?'#1e293b':'transparent'};background:${currentLang==='en-US'?'rgba(30,41,59,0.05)':'rgba(0,0,0,0.02)'};">🇺🇸 ${t('english')} ${currentLang==='en-US'?'✓':''}</div></div>`;
-        const overlay = document.createElement('div');
-        overlay.style.cssText =
-          'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
-        overlay.innerHTML =
-          `<div style="background:white;border-radius:20px;padding:24px;max-width:380px;width:90%;"><h3 style="margin-bottom:12px;">${t('selectLanguage')}</h3>${html}<button id="lclose" style="margin-top:12px;width:100%;padding:10px;border:none;border-radius:20px;background:#f1f5f9;cursor:pointer;">${t('close')}</button></div>`;
-        document.body.appendChild(overlay);
-        overlay.querySelectorAll('.lopt').forEach(o => o.onclick = () => {
-          const nl = o.dataset.l;
-          if (nl !== currentLang) {
-            currentLang = nl;
-            try {
-              localStorage.setItem('pdf-tool-lang', nl);
-            } catch (e) {}
-            updateAllTexts();
+        getHistory() {
+          try {
+            return JSON.parse(localStorage.getItem(this.key) || '[]');
+          } catch {
+            return [];
           }
-          overlay.remove();
+        }
+        addEntry(entry) {
+          const history = this.getHistory();
+          history.unshift({
+            ...entry,
+            timestamp: Date.now(),
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+          });
+          if (history.length > this.maxItems) {
+            history.length = this.maxItems;
+          }
+          try {
+            localStorage.setItem(this.key, JSON.stringify(history));
+          } catch (e) {}
+        }
+        clearHistory() {
+          try {
+            localStorage.removeItem(this.key);
+          } catch (e) {}
+        }
+      }
+
+      const historyManager = new HistoryManager();
+
+      // ==================== 主题 ====================
+      function initTheme() {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('pdf-tool-theme');
+        if (savedTheme) {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else if (prefersDark.matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        prefersDark.addEventListener('change', (e) => {
+          if (!localStorage.getItem('pdf-tool-theme')) {
+            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          }
         });
-        overlay.querySelector('#lclose').onclick = () => overlay.remove();
-        overlay.onclick = (e) => {
-          if (e.target === overlay) overlay.remove();
-        };
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try {
+          localStorage.setItem('pdf-tool-theme', next);
+        } catch (e) {}
       }
 
       // ==================== 核心变量 ====================
       let currentTool = 'removePassword';
       let fileEntries = [];
+      let pageThumbnails = {};
       const toolCard = document.getElementById('toolCard');
       const statusArea = document.getElementById('statusArea');
       const toolsGrid = document.getElementById('toolsGrid');
       const multiFileTools = ['merge', 'removePassword', 'imagesToPdf'];
 
-      toolsGrid.addEventListener('click', (e) => {
+      // ==================== 工具按钮点击 ====================
+      toolsGrid.addEventListener('click', function(e) {
         const btn = e.target.closest('.tool-btn');
         if (!btn) return;
-        toolsGrid.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        
+        // 切换活跃状态
+        const allBtns = toolsGrid.querySelectorAll('.tool-btn');
+        allBtns.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
+        
+        // 切换工具
         currentTool = btn.dataset.tool;
         fileEntries = [];
+        pageThumbnails = {};
         clearStatus();
         renderToolUI();
       });
@@ -888,70 +1153,29 @@
         statusArea.innerHTML = '';
       }
 
-      function setStatus(text, type = 'info') {
-        const cls = type === 'warn' ? 'status-warn' : type === 'success' ? 'status-success' : 'status-info';
-        statusArea.innerHTML = `<div class="status ${cls}">${text}</div>`;
+      function setStatus(text, type) {
+        type = type || 'info';
+        var cls = type === 'warn' ? 'status-warn' : type === 'success' ? 'status-success' : 'status-info';
+        statusArea.innerHTML = '<div class="status ' + cls + '">' + text + '</div>';
       }
 
-      function setProgress(pct, text = '') {
-        statusArea.innerHTML =
-          `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div><div style="text-align:center;font-size:0.75rem;color:#64748b;">${text || Math.round(pct) + '%'}</div>`;
+      function setProgress(pct, text) {
+        statusArea.innerHTML = '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div style="text-align:center;font-size:0.75rem;color:var(--text-secondary);">' + (text || Math.round(pct) + '%') + '</div>';
       }
 
-      function getRenderOptions() {
-        if (currentTool === 'compress') return {
-          scale: parseFloat(document.getElementById('renderScale')?.value || '1.0'),
-          quality: parseFloat(document.getElementById('jpegQuality')?.value || '0.6')
-        };
-        if (currentTool === 'pdfToImages') return {
-          scale: parseFloat(document.getElementById('renderScale')?.value || '2.0'),
-          quality: parseFloat(document.getElementById('jpegQuality')?.value || '0.92')
-        };
-        return { scale: 2.0, quality: 0.92 };
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
       }
 
-      async function renderPdfToImages(file, password = '', options = {}) {
-        const { scale = 2.0, quality = 0.92 } = options;
-        const arrayBuf = await file.arrayBuffer();
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuf, password: password || undefined });
-        return new Promise((resolve, reject) => {
-          loadingTask.onPassword = (_, reason) => {
-            if (reason === 1) reject(new Error('NEED_PASSWORD'));
-            else if (reason === 2) reject(new Error('INCORRECT_PASSWORD'));
-          };
-          loadingTask.promise.then(async (pdf) => {
-            const pages = [];
-            for (let i = 1; i <= pdf.numPages; i++) {
-              const page = await pdf.getPage(i);
-              const vp = page.getViewport({ scale });
-              const canvas = document.createElement('canvas');
-              canvas.width = vp.width;
-              canvas.height = vp.height;
-              await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-              const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
-              pages.push({ width: vp.width, height: vp.height, data: await blob.arrayBuffer(), blob });
-            }
-            resolve(pages);
-          }).catch(err => {
-            if (err.name === 'PasswordException') reject(new Error('INCORRECT_PASSWORD'));
-            else reject(err);
-          });
-        });
+      function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
       }
 
-      async function createPdfFromImages(pageImages) {
-        const { PDFDocument } = PDFLib;
-        const doc = await PDFDocument.create();
-        for (const img of pageImages) {
-          let jpg;
-          if (img.data instanceof ArrayBuffer) jpg = await doc.embedJpg(img.data);
-          else if (img.blob) jpg = await doc.embedJpg(await img.blob.arrayBuffer());
-          const page = doc.addPage([img.width, img.height]);
-          page.drawImage(jpg, { x: 0, y: 0, width: img.width, height: img.height });
-        }
-        return await doc.save();
-      }
-
+      // ==================== 所有功能函数 ====================
       async function checkEncrypted(file) {
         try {
           await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
@@ -961,488 +1185,221 @@
         }
       }
 
-      async function processPdf(file, password = '') {
-        const needsPwd = await checkEncrypted(file);
-        if (needsPwd && !password) throw new Error('NEED_PASSWORD');
-        return { pageImages: await renderPdfToImages(file, password, getRenderOptions()), isEncrypted: needsPwd };
+      async function renderThumbnail(file, password) {
+        password = password || '';
+        var cacheKey = file.name + '_' + file.size + '_' + password;
+        if (pageThumbnails[cacheKey]) return pageThumbnails[cacheKey];
+        try {
+          var arrayBuf = await file.arrayBuffer();
+          var pdf = await pdfjsLib.getDocument({ data: arrayBuf, password: password || undefined }).promise;
+          var page = await pdf.getPage(1);
+          var viewport = page.getViewport({ scale: 0.5 });
+          var canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          pageThumbnails[cacheKey] = dataUrl;
+          return dataUrl;
+        } catch (e) {
+          return null;
+        }
       }
 
-      async function extractImages(file, password = '') {
-        const arrayBuf = await file.arrayBuffer();
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuf, password: password || undefined });
-        return new Promise((resolve, reject) => {
-          loadingTask.onPassword = (_, reason) => {
+      async function renderPdfToImages(file, password, options) {
+        password = password || '';
+        options = options || {};
+        var scale = options.scale || 2.0;
+        var quality = options.quality || 0.92;
+        var arrayBuf = await file.arrayBuffer();
+        var loadingTask = pdfjsLib.getDocument({ data: arrayBuf, password: password || undefined });
+        return new Promise(function(resolve, reject) {
+          loadingTask.onPassword = function(_, reason) {
             if (reason === 1) reject(new Error('NEED_PASSWORD'));
             else if (reason === 2) reject(new Error('INCORRECT_PASSWORD'));
           };
-          loadingTask.promise.then(async (pdf) => {
-            const images = [];
-            for (let p = 1; p <= pdf.numPages; p++) {
-              const page = await pdf.getPage(p);
-              const ops = await page.getOperatorList();
-              for (let i = 0; i < ops.fnArray.length; i++) {
-                if (ops.fnArray[i] === pdfjsLib.OPS.paintImageXObject || ops.fnArray[i] === pdfjsLib.OPS
-                  .paintInlineImageXObject) {
-                  try {
-                    const imgData = await page.objs.get(ops.argsArray[i][0]);
-                    if (imgData?.data) {
-                      const canvas = document.createElement('canvas');
-                      canvas.width = imgData.width;
-                      canvas.height = imgData.height;
-                      const ctx = canvas.getContext('2d');
-                      const id = ctx.createImageData(imgData.width, imgData.height);
-                      id.data.set(imgData.data);
-                      ctx.putImageData(id, 0, 0);
-                      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-                      images.push({ blob, pageNum: p, index: images.length + 1 });
-                    }
-                  } catch (e) {}
-                }
-              }
+          loadingTask.promise.then(async function(pdf) {
+            var pages = [];
+            for (var i = 1; i <= pdf.numPages; i++) {
+              var page = await pdf.getPage(i);
+              var vp = page.getViewport({ scale: scale });
+              var canvas = document.createElement('canvas');
+              canvas.width = vp.width;
+              canvas.height = vp.height;
+              await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+              var blob = await new Promise(function(r) { canvas.toBlob(r, 'image/jpeg', quality); });
+              pages.push({ width: vp.width, height: vp.height, data: await blob.arrayBuffer(), blob: blob });
             }
-            resolve(images);
-          }).catch(err => {
+            resolve(pages);
+          }).catch(function(err) {
             if (err.name === 'PasswordException') reject(new Error('INCORRECT_PASSWORD'));
             else reject(err);
           });
         });
       }
 
-      function handleError(err, idx) {
-        const entry = fileEntries[idx];
-        if (!entry) return;
-        if (err.message === 'NEED_PASSWORD') {
-          entry.status = 'error';
-          setStatus(`⚠️ ${t('needPassword')}`, 'warn');
-        } else if (err.message === 'INCORRECT_PASSWORD') {
-          entry.status = 'error';
-          setStatus(`❌ ${t('wrongPassword')}`, 'warn');
-        } else {
-          setStatus(`❌ ${err.message}`, 'warn');
-        }
-        renderFileList();
-      }
-
-      function renderToolUI() {
-        clearStatus();
-        const builders = {
-          merge: buildMergeUI,
-          split: buildSplitUI,
-          removePassword: buildRemovePwdUI,
-          compress: buildCompressUI,
-          extract: buildExtractUI,
-          extractPages: buildExtractPagesUI,
-          pdfToImages: buildPdfToImagesUI,
-          imagesToPdf: buildImagesToPdfUI
-        };
-        toolCard.innerHTML = (builders[currentTool] || (() => ''))();
-        attachEvents();
-        renderFileList();
-      }
-
-      function fileDropArea(multiple, title, accept = '.pdf') {
-        const iconMap = { merge: '📎', split: '✂️', removePassword: '🔓', compress: '📦', extract: '🖼️', extractPages: '📑',
-          pdfToImages: '🔄', imagesToPdf: '📸' };
-        return `<div class="file-area" id="fileArea"><div class="file-icon">${iconMap[currentTool]||'📂'}</div><div class="file-label">${title}</div><div class="file-hint">${multiple ? t('supportMulti') : t('supportSingle')} (${accept})</div><input type="file" id="fileAreaInput" class="file-input" accept="${accept}" ${multiple ? 'multiple' : ''}></div><div id="fileAreaList" class="file-list"></div>`;
-      }
-
-      function buildMergeUI() {
-        return `${fileDropArea(true, t('selectPdfMerge'))}<div class="same-pwd-row" id="samePwdRow" style="display:none;"><input type="checkbox" id="samePwdCheck" checked><label for="samePwdCheck">${t('samePassword')}</label></div><div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordLabel')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startMerge')}</button><button class="btn-secondary" id="clearBtn">${t('clearList')}</button></div>`;
-      }
-
-      function buildSplitUI() {
-        return `${fileDropArea(false, t('selectPdfSplit'))}<div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordSingle')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div style="margin-top:0.8rem;display:flex;gap:0.6rem;align-items:center;"><label>${t('splitMode')}</label><select id="splitMode"><option value="pages">${t('byPage')}</option><option value="range">${t('byRange')}</option></select></div><div id="rangeInputWrap" style="margin-top:0.6rem;display:none;"><input type="text" id="rangeInput" placeholder="${t('rangePlaceholder')}" style="width:100%;padding:0.5rem;border-radius:2rem;border:1px solid #ddd;"></div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startSplit')}</button></div>`;
-      }
-
-      function buildRemovePwdUI() {
-        return `${fileDropArea(true, t('selectPdfRemovePwd'))}<div class="same-pwd-row" id="samePwdRow" style="display:none;"><input type="checkbox" id="samePwdCheck" checked><label for="samePwdCheck">${t('samePassword')}</label></div><div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordLabel')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div class="highlight-box"><span>🔓</span><div>${t('removePwdInfo')}</div></div><div class="btn-group"><button class="btn-primary btn-danger" id="actionBtn">${t('startRemovePwd')}</button><button class="btn-secondary" id="clearBtn">${t('clearList')}</button></div>`;
-      }
-
-      function buildCompressUI() {
-        return `${fileDropArea(false, t('selectPdfCompress'))}<div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordSingle')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div class="quality-selector"><label>${t('clarity')}</label><select id="renderScale"><option value="1.0" selected>${t('sd')}</option><option value="1.5">${t('hd')}</option><option value="2.0">${t('uhd')}</option></select><label>${t('quality')}</label><select id="jpegQuality"><option value="0.5">${t('maxCompress')}</option><option value="0.6" selected>${t('saveSpace')}</option><option value="0.75">${t('balanced')}</option><option value="0.85">${t('highQuality')}</option></select></div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startCompress')}</button></div>`;
-      }
-
-      function buildExtractUI() {
-        return `${fileDropArea(false, t('selectPdfExtract'))}<div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordSingle')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('extractImagesBtn')}</button></div>`;
-      }
-
-      function buildExtractPagesUI() {
-        return `${fileDropArea(false, t('selectPdfExtractPages'))}<div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordSingle')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div style="margin-top:0.8rem;"><label style="font-weight:500;">${t('extractRange')}</label><input type="text" id="extractRange" placeholder="${t('rangePlaceholder')}" style="width:100%;padding:0.5rem;border-radius:2rem;border:1px solid #ddd;margin-top:0.4rem;"></div><div class="info-box">💡 ${t('rangeInfo')}</div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startExtractPages')}</button></div>`;
-      }
-
-      function buildPdfToImagesUI() {
-        return `${fileDropArea(false, t('selectPdfToImages'))}<div id="globalPwdSection" class="password-section" style="display:none;"><span>${t('passwordSingle')}</span><input type="password" id="globalPassword" class="password-input" placeholder="${t('passwordPlaceholder')}"><button class="toggle-pwd" data-target="globalPassword">${t('show')}</button></div><div class="quality-selector"><label>${t('clarity')}</label><select id="renderScale"><option value="1.5">${t('hd')}</option><option value="2.0" selected>${t('uhd')}</option><option value="3.0">3.0x</option></select><label>${t('quality')}</label><select id="jpegQuality"><option value="0.85">${t('highQuality')}</option><option value="0.92" selected>${t('balanced')}</option><option value="1.0">${t('original')}</option></select></div><div class="output-format-row"><label>${t('outputFormat')}</label><select id="outputFormat"><option value="jpeg">JPEG</option><option value="png">PNG</option></select><label style="margin-left:0.8rem;">${t('zipDownload')}</label><input type="checkbox" id="zipDownload"></div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startConvert')}</button></div>`;
-      }
-
-      function buildImagesToPdfUI() {
-        return `${fileDropArea(true, t('selectImagesToPdf'), '.jpg,.jpeg,.png,.webp,.bmp')}<div style="margin-top:0.8rem;display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;"><label>${t('pageSize')}</label><select id="pageSize"><option value="auto" selected>${t('auto')}</option><option value="a4">A4</option><option value="letter">Letter</option></select><label>${t('fitMode')}</label><select id="fitMode"><option value="fit" selected>${t('fit')}</option><option value="fill">${t('fill')}</option><option value="original">${t('original')}</option></select></div><div class="info-box">💡 ${t('imgInfo')}</div><div class="btn-group"><button class="btn-primary" id="actionBtn">${t('startCompose')}</button><button class="btn-secondary" id="clearBtn">${t('clearList')}</button></div>`;
-      }
-
-      async function renderFileList() {
-        const listDiv = document.getElementById('fileAreaList');
-        if (!listDiv) return;
-        if (!fileEntries.length) {
-          listDiv.innerHTML = '';
-          updatePasswordUI();
-          return;
-        }
-        if (currentTool !== 'imagesToPdf') {
-          for (const e of fileEntries) {
-            if (e.encrypted === undefined) e.encrypted = await checkEncrypted(e.file);
+      async function createPdfFromImages(pageImages) {
+        var doc = await PDFLib.PDFDocument.create();
+        for (var i = 0; i < pageImages.length; i++) {
+          var img = pageImages[i];
+          var jpg;
+          if (img.data instanceof ArrayBuffer) {
+            jpg = await doc.embedJpg(img.data);
+          } else if (img.blob) {
+            jpg = await doc.embedJpg(await img.blob.arrayBuffer());
           }
+          var page = doc.addPage([img.width, img.height]);
+          page.drawImage(jpg, { x: 0, y: 0, width: img.width, height: img.height });
         }
-        updatePasswordUI();
-        const useSame = isSamePasswordMode();
-        listDiv.innerHTML = fileEntries.map((entry, idx) => {
-          const isImg = currentTool === 'imagesToPdf';
-          const sBadge = entry.status === 'ok' ? '<span class="badge badge-ok">✅</span>' : entry.status ===
-            'error' ? '<span class="badge badge-error">❌</span>' : '';
-          const eBadge = !isImg ? (entry.encrypted ? '<span class="badge badge-encrypted">🔒</span>' :
-            '<span class="badge badge-plain">📄</span>') : '';
-          let pwdHtml = '';
-          if (!isImg && entry.encrypted && !useSame) {
-            pwdHtml =
-              `<input type="password" class="pwd-input ${entry.status==='error'?'error':''}" value="${escapeHtml(entry.password||'')}" data-idx="${idx}" placeholder="${t('passwordPlaceholder')}">`;
-            if (entry.status === 'error') pwdHtml += `<button class="btn-retry" data-idx="${idx}">🔄</button>`;
-          } else if (!isImg && entry.encrypted && entry.status === 'error' && useSame) {
-            pwdHtml = `<button class="btn-retry" data-idx="${idx}">🔄</button>`;
-          }
-          return `<div class="file-list-item" draggable="true" data-idx="${idx}"><span class="drag-handle">⠿</span><div class="file-info"><span class="file-idx">${idx+1}</span><span class="file-name">${isImg ? '🖼️' : '📄'} ${escapeHtml(entry.file.name)}</span><span class="file-size">(${(entry.file.size/1024).toFixed(0)}KB)</span>${eBadge}${sBadge}</div><div class="file-actions">${pwdHtml}<button class="btn-icon remove-btn" data-idx="${idx}">✕</button></div></div>`;
-        }).join('');
-        bindListEvents();
+        return await doc.save();
       }
 
-      function bindListEvents() {
-        const list = document.getElementById('fileAreaList');
-        if (!list) return;
-        list.querySelectorAll('.remove-btn').forEach(b => b.onclick = (e) => {
-          e.stopPropagation();
-          fileEntries.splice(parseInt(b.dataset.idx), 1);
-          renderFileList();
-        });
-        list.querySelectorAll('.pwd-input').forEach(i => i.oninput = function() {
-          const idx = parseInt(this.dataset.idx);
-          fileEntries[idx].password = this.value;
-          if (fileEntries[idx].status === 'error') {
-            fileEntries[idx].status = undefined;
-            renderFileList();
-          }
-        });
-        list.querySelectorAll('.btn-retry').forEach(b => b.onclick = () => {
-          const idx = parseInt(b.dataset.idx);
-          fileEntries[idx].status = undefined;
-          renderFileList();
-          executeAction(idx);
-        });
-        setupDragSort(list);
+      async function processPdf(file, password) {
+        password = password || '';
+        var needsPwd = await checkEncrypted(file);
+        if (needsPwd && !password) throw new Error('NEED_PASSWORD');
+        var options = getRenderOptions();
+        return { pageImages: await renderPdfToImages(file, password, options), isEncrypted: needsPwd };
       }
 
-      function setupDragSort(list) {
-        let dragIdx = null;
-        list.querySelectorAll('.file-list-item').forEach(item => {
-          item.addEventListener('dragstart', () => {
-            dragIdx = parseInt(item.dataset.idx);
-            item.style.opacity = '0.5';
-          });
-          item.addEventListener('dragend', () => {
-            item.style.opacity = '1';
-            list.querySelectorAll('.file-list-item').forEach(el => el.classList.remove('drag-over'));
-          });
-          item.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            item.classList.add('drag-over');
-          });
-          item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-          item.addEventListener('drop', (e) => {
-            e.preventDefault();
-            item.classList.remove('drag-over');
-            const dropIdx = parseInt(item.dataset.idx);
-            if (dragIdx !== null && dragIdx !== dropIdx) {
-              const [m] = fileEntries.splice(dragIdx, 1);
-              fileEntries.splice(dropIdx, 0, m);
-              renderFileList();
+      async function extractImages(file, password) {
+        password = password || '';
+        var arrayBuf = await file.arrayBuffer();
+        var loadingTask = pdfjsLib.getDocument({ data: arrayBuf, password: password || undefined });
+        return new Promise(function(resolve, reject) {
+          loadingTask.onPassword = function(_, reason) {
+            if (reason === 1) reject(new Error('NEED_PASSWORD'));
+            else if (reason === 2) reject(new Error('INCORRECT_PASSWORD'));
+          };
+          loadingTask.promise.then(async function(pdf) {
+            var images = [];
+            for (var p = 1; p <= pdf.numPages; p++) {
+              var page = await pdf.getPage(p);
+              var ops = await page.getOperatorList();
+              for (var i = 0; i < ops.fnArray.length; i++) {
+                if (ops.fnArray[i] === pdfjsLib.OPS.paintImageXObject || ops.fnArray[i] === pdfjsLib.OPS.paintInlineImageXObject) {
+                  try {
+                    var imgData = await page.objs.get(ops.argsArray[i][0]);
+                    if (imgData && imgData.data) {
+                      var canvas = document.createElement('canvas');
+                      canvas.width = imgData.width;
+                      canvas.height = imgData.height;
+                      var ctx = canvas.getContext('2d');
+                      var id = ctx.createImageData(imgData.width, imgData.height);
+                      id.data.set(imgData.data);
+                      ctx.putImageData(id, 0, 0);
+                      var blob = await new Promise(function(r) { canvas.toBlob(r, 'image/png'); });
+                      images.push({ blob: blob, pageNum: p, index: images.length + 1 });
+                    }
+                  } catch (e) {}
+                }
+              }
             }
+            resolve(images);
+          }).catch(function(err) {
+            if (err.name === 'PasswordException') reject(new Error('INCORRECT_PASSWORD'));
+            else reject(err);
           });
         });
       }
 
-      function updatePasswordUI() {
-        const hasEnc = fileEntries.some(e => e.encrypted);
-        const useSame = isSamePasswordMode();
-        const gs = document.getElementById('globalPwdSection');
-        const sr = document.getElementById('samePwdRow');
-        if (gs) gs.style.display = (hasEnc && useSame && currentTool !== 'imagesToPdf') ? 'flex' : 'none';
-        if (sr) sr.style.display = (hasEnc && fileEntries.length > 1 && multiFileTools.includes(currentTool)) ? 'flex' :
-          'none';
+      function getRenderOptions() {
+        var scaleEl = document.getElementById('renderScale');
+        var qualityEl = document.getElementById('jpegQuality');
+        var scale = scaleEl ? parseFloat(scaleEl.value) : 2.0;
+        var quality = qualityEl ? parseFloat(qualityEl.value) : 0.92;
+        return { scale: scale, quality: quality };
       }
 
       function isSamePasswordMode() {
-        const c = document.getElementById('samePwdCheck');
+        var c = document.getElementById('samePwdCheck');
         return c ? c.checked : true;
       }
 
       function getPasswordForFile(idx) {
-        return isSamePasswordMode() ? (document.getElementById('globalPassword')?.value || '') : (fileEntries[idx]
-          ?.password || '');
+        if (isSamePasswordMode()) {
+          var gp = document.getElementById('globalPassword');
+          return gp ? gp.value : '';
+        }
+        return fileEntries[idx] ? (fileEntries[idx].password || '') : '';
       }
 
-      function escapeHtml(s) {
-        const d = document.createElement('div');
-        d.textContent = s;
-        return d.innerHTML;
+      function parseRange(s, total) {
+        var set = new Set();
+        if (!s.trim()) {
+          var arr = [];
+          for (var i = 0; i < total; i++) arr.push(i);
+          return arr;
+        }
+        var parts = s.split(',');
+        for (var j = 0; j < parts.length; j++) {
+          var p = parts[j].trim();
+          if (p.includes('-')) {
+            var ab = p.split('-');
+            var a = Number(ab[0]);
+            var b = Number(ab[1]);
+            for (var k = a; k <= b; k++) {
+              if (k >= 1 && k <= total) set.add(k - 1);
+            }
+          } else {
+            var n = Number(p);
+            if (n >= 1 && n <= total) set.add(n - 1);
+          }
+        }
+        var result = [];
+        set.forEach(function(v) { result.push(v); });
+        return result.sort(function(a, b) { return a - b; });
       }
 
       function download(blob, name) {
-    // 使用 FileReader 转 data URL（最兼容）
-    const reader = new FileReader();
-    reader.onload = function() {
-        const a = document.createElement('a');
-        a.href = reader.result;
-        a.download = name;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
+        var reader = new FileReader();
+        reader.onload = function() {
+          var a = document.createElement('a');
+          a.href = reader.result;
+          a.download = name;
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function() {
             document.body.removeChild(a);
-        }, 200);
-    };
-    reader.onerror = function() {
-        // 如果 FileReader 也失败，尝试 Blob URL
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = name;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
+          }, 200);
+        };
+        reader.onerror = function() {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = name;
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function() {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        }, 200);
-    };
-    reader.readAsDataURL(blob);
-}
-
-      function parseRange(s, total) {
-        const set = new Set();
-        if (!s.trim()) return [...Array(total).keys()];
-        s.split(',').forEach(p => {
-          p = p.trim();
-          if (p.includes('-')) {
-            const [a, b] = p.split('-').map(Number);
-            for (let i = a; i <= b; i++)
-              if (i >= 1 && i <= total) set.add(i - 1);
-          } else {
-            const n = Number(p);
-            if (n >= 1 && n <= total) set.add(n - 1);
-          }
-        });
-        return [...set].sort((a, b) => a - b);
+          }, 200);
+        };
+        reader.readAsDataURL(blob);
       }
 
-      function attachEvents() {
-        const area = document.getElementById('fileArea');
-        const input = document.getElementById('fileAreaInput');
-        if (area && input) {
-          area.onclick = () => input.click();
-          area.ondragover = (e) => {
-            e.preventDefault();
-            area.classList.add('dragover');
-          };
-          area.ondragleave = () => area.classList.remove('dragover');
-          area.ondrop = (e) => {
-            e.preventDefault();
-            area.classList.remove('dragover');
-            const fs = Array.from(e.dataTransfer.files).filter(f => {
-              if (currentTool === 'imagesToPdf') return f.type.startsWith('image/');
-              return f.type === 'application/pdf' || f.name.endsWith('.pdf');
-            });
-            if (fs.length) {
-              if (!multiFileTools.includes(currentTool)) fileEntries = [];
-              fileEntries.push(...fs.map(f => ({ file: f, password: '', status: undefined, encrypted: undefined })));
-              renderFileList();
-            }
-          };
-          input.onchange = () => {
-            const fs = Array.from(input.files);
-            if (!multiFileTools.includes(currentTool)) fileEntries = [];
-            fileEntries.push(...fs.map(f => ({ file: f, password: '', status: undefined, encrypted: undefined })));
-            input.value = '';
-            renderFileList();
-          };
-        }
-        document.getElementById('clearBtn')?.addEventListener('click', () => {
-          fileEntries = [];
-          renderFileList();
-        });
-        document.getElementById('samePwdCheck')?.addEventListener('change', renderFileList);
-        document.querySelectorAll('.toggle-pwd').forEach(b => b.onclick = () => {
-          const tg = document.getElementById(b.dataset.target);
-          if (tg) {
-            tg.type = tg.type === 'password' ? 'text' : 'password';
-            b.textContent = tg.type === 'password' ? t('show') : t('hide');
+      async function downloadMultipleAsZip(blobs, zipName) {
+        if (typeof JSZip === 'undefined') {
+          for (var i = 0; i < blobs.length; i++) {
+            download(blobs[i].blob, blobs[i].name);
           }
-        });
-        document.getElementById('splitMode')?.addEventListener('change', (e) => {
-          const w = document.getElementById('rangeInputWrap');
-          if (w) w.style.display = e.target.value === 'range' ? 'block' : 'none';
-        });
-        document.getElementById('actionBtn')?.addEventListener('click', () => executeAction(0));
-      }
-
-      async function executeAction(startIdx = 0) {
-        if (!fileEntries.length) {
-          setStatus(t('noFile'), 'warn');
           return;
         }
-        try {
-          const actions = {
-            merge: () => doMerge(startIdx),
-            split: doSplit,
-            removePassword: () => doRemovePassword(startIdx),
-            compress: doCompress,
-            extract: doExtract,
-            extractPages: doExtractPages,
-            pdfToImages: doPdfToImages,
-            imagesToPdf: doImagesToPdf
-          };
-          await (actions[currentTool] || (() => {}))();
-        } catch (err) {
-          setStatus(`❌ ${err.message}`, 'warn');
+        var zip = new JSZip();
+        for (var j = 0; j < blobs.length; j++) {
+          zip.file(blobs[j].name, blobs[j].blob);
         }
-      }
-
-      async function doMerge(startIdx) {
-        if (fileEntries.length < 2) {
-          setStatus(t('atLeast2'), 'warn');
-          return;
-        }
-        const allImages = [];
-        for (let i = startIdx; i < fileEntries.length; i++) {
-          setProgress((i / fileEntries.length) * 100, `${t('processing')} ${fileEntries[i].file.name}`);
-          try {
-            const { pageImages } = await processPdf(fileEntries[i].file, getPasswordForFile(i));
-            allImages.push(...pageImages);
-            fileEntries[i].status = 'ok';
-          } catch (err) {
-            handleError(err, i);
-            return;
-          }
-        }
-        setProgress(100, t('generating'));
-        download(new Blob([await createPdfFromImages(allImages)], { type: 'application/pdf' }), 'merged.pdf');
-        fileEntries.forEach(e => e.status = undefined);
-        setStatus(`✅ ${t('mergeSuccess')} (${allImages.length}${t('pages')})`, 'success');
-        renderFileList();
-      }
-
-      async function doSplit() {
-        const { pageImages } = await processPdf(fileEntries[0].file, getPasswordForFile(0));
-        const mode = document.getElementById('splitMode')?.value || 'pages';
-        if (mode === 'pages') {
-          for (let i = 0; i < pageImages.length; i++) {
-            setProgress((i / pageImages.length) * 100);
-            download(new Blob([await createPdfFromImages([pageImages[i]])], { type: 'application/pdf' }),
-              `page_${i+1}.pdf`);
-          }
-        } else {
-          const indices = parseRange(document.getElementById('rangeInput')?.value || '', pageImages.length);
-          if (!indices.length) {
-            setStatus(t('invalidRange'), 'warn');
-            return;
-          }
-          download(new Blob([await createPdfFromImages(indices.map(i => pageImages[i]))], { type: 'application/pdf' }),
-            'split.pdf');
-        }
-        setStatus(`✅ ${t('splitSuccess')}`, 'success');
-      }
-
-      async function doRemovePassword(startIdx) {
-        for (let i = startIdx; i < fileEntries.length; i++) {
-          setProgress((i / fileEntries.length) * 100, `${t('processing')} ${fileEntries[i].file.name}`);
-          try {
-            const { pageImages } = await processPdf(fileEntries[i].file, getPasswordForFile(i));
-            download(new Blob([await createPdfFromImages(pageImages)], { type: 'application/pdf' }), fileEntries[i].file
-              .name.replace(/\.pdf$/i, '') + '_no_password.pdf');
-            fileEntries[i].status = 'ok';
-          } catch (err) {
-            handleError(err, i);
-            return;
-          }
-        }
-        fileEntries.forEach(e => e.status = undefined);
-        setStatus(`✅ ${t('extractSuccess')}`, 'success');
-        renderFileList();
-      }
-
-      async function doCompress() {
-        setProgress(0, t('processing'));
-        const { pageImages } = await processPdf(fileEntries[0].file, getPasswordForFile(0));
-        const bytes = await createPdfFromImages(pageImages);
-        download(new Blob([bytes], { type: 'application/pdf' }), 'compressed.pdf');
-        setStatus(`✅ ${t('compressSuccess')}`, 'success');
-      }
-
-      async function doExtract() {
-        const images = await extractImages(fileEntries[0].file, getPasswordForFile(0));
-        if (!images.length) {
-          setStatus(t('noFile'), 'warn');
-          return;
-        }
-        if (images.length === 1) download(images[0].blob, 'image.png');
-        else if (typeof JSZip !== 'undefined') {
-          const zip = new JSZip();
-          images.forEach(img => zip.file(`page${img.pageNum}_${img.index}.png`, img.blob));
-          download(await zip.generateAsync({ type: 'blob' }), 'images.zip');
-        } else images.forEach(img => download(img.blob, `page${img.pageNum}_${img.index}.png`));
-        setStatus(`✅ ${t('extractSuccess')} (${images.length})`, 'success');
-      }
-
-      async function doExtractPages() {
-        setProgress(0, t('processing'));
-        const { pageImages } = await processPdf(fileEntries[0].file, getPasswordForFile(0));
-        const rangeStr = document.getElementById('extractRange')?.value || '';
-        const indices = parseRange(rangeStr, pageImages.length);
-        if (!indices.length) {
-          setStatus(t('pleaseEnterRange'), 'warn');
-          return;
-        }
-        const bytes = await createPdfFromImages(indices.map(i => pageImages[i]));
-        download(new Blob([bytes], { type: 'application/pdf' }), `extracted_pages.pdf`);
-        setStatus(`✅ ${t('extractSuccess')} (${indices.length}${t('pages')})`, 'success');
-      }
-
-      async function doPdfToImages() {
-        setProgress(0, t('processing'));
-        const { pageImages } = await processPdf(fileEntries[0].file, getPasswordForFile(0));
-        const format = document.getElementById('outputFormat')?.value || 'jpeg';
-        const useZip = document.getElementById('zipDownload')?.checked ?? false;
-        if (pageImages.length === 1 && !useZip) {
-          const blob = format === 'png' ? await jpegToPng(pageImages[0].blob) : pageImages[0].blob;
-          download(blob, `page_1.${format}`);
-        } else if (useZip && typeof JSZip !== 'undefined') {
-          const zip = new JSZip();
-          for (let i = 0; i < pageImages.length; i++) {
-            setProgress((i / pageImages.length) * 100);
-            const blob = format === 'png' ? await jpegToPng(pageImages[i].blob) : pageImages[i].blob;
-            zip.file(`page_${i+1}.${format}`, blob);
-          }
-          download(await zip.generateAsync({ type: 'blob' }), 'pdf_images.zip');
-        } else {
-          for (let i = 0; i < pageImages.length; i++) {
-            setProgress((i / pageImages.length) * 100);
-            const blob = format === 'png' ? await jpegToPng(pageImages[i].blob) : pageImages[i].blob;
-            download(blob, `page_${i+1}.${format}`);
-          }
-        }
-        setStatus(`✅ ${t('convertSuccess')} (${pageImages.length})`, 'success');
+        var zipBlob = await zip.generateAsync({ type: 'blob' });
+        download(zipBlob, zipName);
       }
 
       async function jpegToPng(jpegBlob) {
-        return new Promise(resolve => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
+        return new Promise(function(resolve) {
+          var img = new Image();
+          img.onload = function() {
+            var canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             canvas.getContext('2d').drawImage(img, 0, 0);
@@ -1452,50 +1409,844 @@
         });
       }
 
+      function degreesToRadians(degrees) {
+        return degrees * (Math.PI / 180);
+      }
+
+      function showDownloadResult(originalSize, newSize) {
+        var savings = ((1 - newSize / originalSize) * 100).toFixed(1);
+        var savedBytes = originalSize - newSize;
+        var html = '<div class="result-card">';
+        html += '<div class="result-item"><span>📄 ' + t('originalSize') + '</span><strong>' + formatFileSize(originalSize) + '</strong></div>';
+        html += '<div class="result-item"><span>📦 ' + t('newSize') + '</span><strong>' + formatFileSize(newSize) + '</strong></div>';
+        if (savedBytes > 0) {
+          html += '<div class="result-savings">🎉 ' + t('saved') + ' ' + formatFileSize(savedBytes) + ' (' + savings + '%)</div>';
+        }
+        html += '</div>';
+        statusArea.innerHTML += html;
+      }
+
+      function handleError(err, idx) {
+        var entry = fileEntries[idx];
+        if (!entry) return;
+        if (err.message === 'NEED_PASSWORD') {
+          entry.status = 'error';
+          setStatus('⚠️ ' + t('needPassword') + ': "' + escapeHtml(entry.file.name) + '"', 'warn');
+        } else if (err.message === 'INCORRECT_PASSWORD') {
+          entry.status = 'error';
+          setStatus('❌ ' + t('wrongPassword') + ': "' + escapeHtml(entry.file.name) + '"', 'warn');
+        } else {
+          setStatus('❌ ' + err.message, 'warn');
+        }
+        renderFileList();
+      }
+
+      // ==================== UI渲染 ====================
+      function renderToolUI() {
+        clearStatus();
+        var builders = {
+          merge: buildMergeUI,
+          split: buildSplitUI,
+          removePassword: buildRemovePwdUI,
+          compress: buildCompressUI,
+          extract: buildExtractUI,
+          extractPages: buildExtractPagesUI,
+          pdfToImages: buildPdfToImagesUI,
+          imagesToPdf: buildImagesToPdfUI,
+          watermark: buildWatermarkUI,
+          organize: buildOrganizeUI,
+        };
+        var builder = builders[currentTool];
+        toolCard.innerHTML = builder ? builder() : '';
+        attachEvents();
+        renderFileList();
+      }
+
+      function fileDropArea(multiple, title, accept) {
+        accept = accept || '.pdf';
+        var iconMap = { merge: '📎', split: '✂️', removePassword: '🔓', compress: '📦', extract: '🖼️', extractPages: '📑', pdfToImages: '🔄', imagesToPdf: '📸', organize: '🗂️', watermark: '💧' };
+        var icon = iconMap[currentTool] || '📂';
+        return '<div class="file-area" id="fileArea"><div class="file-icon">' + icon + '</div><div class="file-label">' + title + '</div><div class="file-hint">' + (multiple ? t('supportMulti') : t('supportSingle')) + ' (' + accept + ')</div><input type="file" id="fileAreaInput" class="file-input" accept="' + accept + '"' + (multiple ? ' multiple' : '') + '></div><div id="fileAreaList" class="file-list"></div>';
+      }
+
+      function buildMergeUI() {
+        var html = fileDropArea(true, t('selectPdfMerge'));
+        html += '<div class="same-pwd-row" id="samePwdRow" style="display:none;"><input type="checkbox" id="samePwdCheck" checked><label for="samePwdCheck">' + t('samePassword') + '</label></div>';
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordLabel') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startMerge') + '</button><button class="btn-secondary" id="clearBtn">' + t('clearList') + '</button></div>';
+        return html;
+      }
+
+      function buildSplitUI() {
+        var html = fileDropArea(false, t('selectPdfSplit'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div style="margin-top:0.8rem;display:flex;gap:0.6rem;align-items:center;"><label>' + t('splitMode') + '</label><select id="splitMode"><option value="pages">' + t('byPage') + '</option><option value="range">' + t('byRange') + '</option></select></div>';
+        html += '<div id="rangeInputWrap" style="margin-top:0.6rem;display:none;"><input type="text" id="rangeInput" placeholder="' + t('rangePlaceholder') + '" style="width:100%;padding:0.5rem;border-radius:2rem;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);"></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startSplit') + '</button></div>';
+        return html;
+      }
+
+      function buildRemovePwdUI() {
+        var html = fileDropArea(true, t('selectPdfRemovePwd'));
+        html += '<div class="same-pwd-row" id="samePwdRow" style="display:none;"><input type="checkbox" id="samePwdCheck" checked><label for="samePwdCheck">' + t('samePassword') + '</label></div>';
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordLabel') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="highlight-box"><span>🔓</span><div>' + t('removePwdInfo') + '</div></div>';
+        html += '<div class="btn-group"><button class="btn-primary btn-danger" id="actionBtn">' + t('startRemovePwd') + '</button><button class="btn-secondary" id="clearBtn">' + t('clearList') + '</button></div>';
+        return html;
+      }
+
+      function buildCompressUI() {
+        var html = fileDropArea(false, t('selectPdfCompress'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="quality-selector"><label>' + t('compressMode') + '</label><select id="compressMode"><option value="balanced" selected>' + t('balanced') + '</option><option value="rasterize">' + t('rasterize') + '</option></select></div>';
+        html += '<div id="rasterizeWarning" class="warning-box" style="display:none;">⚠️ ' + t('rasterizeWarning') + '</div>';
+        html += '<div id="balancedSettings"><div class="quality-selector"><label>' + t('clarity') + '</label><select id="renderScale"><option value="1.0" selected>' + t('sd') + '</option><option value="1.5">' + t('hd') + '</option><option value="2.0">' + t('uhd') + '</option></select><label>' + t('quality') + '</label><select id="jpegQuality"><option value="0.5">' + t('maxCompress') + '</option><option value="0.6" selected>' + t('saveSpace') + '</option><option value="0.75">' + t('balanced') + '</option><option value="0.85">' + t('highQuality') + '</option></select></div></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startCompress') + '</button></div>';
+        return html;
+      }
+
+      function buildExtractUI() {
+        var html = fileDropArea(false, t('selectPdfExtract'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('extractImagesBtn') + '</button></div>';
+        return html;
+      }
+
+      function buildExtractPagesUI() {
+        var html = fileDropArea(false, t('selectPdfExtractPages'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div style="margin-top:0.8rem;"><label style="font-weight:500;">' + t('extractRange') + '</label><input type="text" id="extractRange" placeholder="' + t('rangePlaceholder') + '" style="width:100%;padding:0.5rem;border-radius:2rem;border:1px solid var(--input-border);margin-top:0.4rem;background:var(--input-bg);color:var(--text-primary);"></div>';
+        html += '<div class="info-box">💡 ' + t('rangeInfo') + '</div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startExtractPages') + '</button></div>';
+        return html;
+      }
+
+      function buildPdfToImagesUI() {
+        var html = fileDropArea(false, t('selectPdfToImages'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="quality-selector"><label>' + t('clarity') + '</label><select id="renderScale"><option value="1.5">' + t('hd') + '</option><option value="2.0" selected>' + t('uhd') + '</option><option value="3.0">3.0x</option></select><label>' + t('quality') + '</label><select id="jpegQuality"><option value="0.85">' + t('highQuality') + '</option><option value="0.92" selected>' + t('balanced') + '</option><option value="1.0">' + t('original') + '</option></select></div>';
+        html += '<div class="output-format-row"><label>' + t('outputFormat') + '</label><select id="outputFormat"><option value="jpeg">JPEG</option><option value="png">PNG</option></select><label style="margin-left:0.8rem;">' + t('zipDownload') + '</label><input type="checkbox" id="zipDownload"></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startConvert') + '</button></div>';
+        return html;
+      }
+
+      function buildImagesToPdfUI() {
+        var html = fileDropArea(true, t('selectImagesToPdf'), '.jpg,.jpeg,.png,.webp,.bmp');
+        html += '<div style="margin-top:0.8rem;display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;"><label>' + t('pageSize') + '</label><select id="pageSize"><option value="auto" selected>' + t('auto') + '</option><option value="a4">A4</option><option value="letter">Letter</option></select><label>' + t('fitMode') + '</label><select id="fitMode"><option value="fit" selected>' + t('fit') + '</option><option value="fill">' + t('fill') + '</option><option value="original">' + t('original') + '</option></select></div>';
+        html += '<div class="info-box">💡 ' + t('imgInfo') + '</div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startCompose') + '</button><button class="btn-secondary" id="clearBtn">' + t('clearList') + '</button></div>';
+        return html;
+      }
+
+      function buildWatermarkUI() {
+        var html = fileDropArea(false, t('selectPdfWatermark'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="watermark-section"><label>' + t('watermarkText') + '</label><input type="text" id="watermarkText" placeholder="' + t('watermarkPlaceholder') + '" value="机密"><label style="margin-left:0.5rem;">透明度：</label><input type="range" id="watermarkOpacity" min="0.1" max="0.5" step="0.05" value="0.2" style="width:80px;"></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('startWatermark') + '</button></div>';
+        return html;
+      }
+
+      function buildOrganizeUI() {
+        var html = fileDropArea(false, t('selectPdfOrganize'));
+        html += '<div id="globalPwdSection" class="password-section" style="display:none;"><span>' + t('passwordSingle') + '</span><input type="password" id="globalPassword" class="password-input" placeholder="' + t('passwordPlaceholder') + '"><button class="toggle-pwd" data-target="globalPassword">' + t('show') + '</button></div>';
+        html += '<div class="btn-group"><button class="btn-primary" id="actionBtn">' + t('exportOrganized') + '</button></div>';
+        return html;
+      }
+
+      // ==================== 文件列表渲染 ====================
+      async function renderFileList() {
+        var listDiv = document.getElementById('fileAreaList');
+        if (!listDiv) return;
+        if (!fileEntries.length) {
+          listDiv.innerHTML = '';
+          updatePasswordUI();
+          return;
+        }
+        if (currentTool !== 'imagesToPdf') {
+          for (var i = 0; i < fileEntries.length; i++) {
+            var e = fileEntries[i];
+            if (e.encrypted === undefined) {
+              e.encrypted = await checkEncrypted(e.file);
+            }
+          }
+        }
+        updatePasswordUI();
+        var useSame = isSamePasswordMode();
+        var itemsHtml = '';
+        for (var idx = 0; idx < fileEntries.length; idx++) {
+          var entry = fileEntries[idx];
+          var isImg = currentTool === 'imagesToPdf';
+          var sBadge = entry.status === 'ok' ? '<span class="badge badge-ok">✅</span>' : entry.status === 'error' ? '<span class="badge badge-error">❌</span>' : '';
+          var eBadge = '';
+          if (!isImg) {
+            eBadge = entry.encrypted ? '<span class="badge badge-encrypted">🔒</span>' : '<span class="badge badge-plain">📄</span>';
+          }
+          var thumbnailHtml = '';
+          if (!isImg && !entry.encrypted) {
+            var thumbDataUrl = await renderThumbnail(entry.file, entry.password || getPasswordForFile(idx));
+            if (thumbDataUrl) {
+              thumbnailHtml = '<img src="' + thumbDataUrl + '" class="file-thumbnail" alt="预览">';
+            }
+          }
+          var pwdHtml = '';
+          if (!isImg && entry.encrypted && !useSame) {
+            pwdHtml = '<input type="password" class="pwd-input' + (entry.status === 'error' ? ' error' : '') + '" value="' + escapeHtml(entry.password || '') + '" data-idx="' + idx + '" placeholder="' + t('passwordPlaceholder') + '">';
+            if (entry.status === 'error') pwdHtml += '<button class="btn-retry" data-idx="' + idx + '">🔄</button>';
+          } else if (!isImg && entry.encrypted && entry.status === 'error' && useSame) {
+            pwdHtml = '<button class="btn-retry" data-idx="' + idx + '">🔄</button>';
+          }
+          itemsHtml += '<div class="file-list-item" draggable="true" data-idx="' + idx + '"><span class="drag-handle">⠿</span>' + thumbnailHtml + '<div class="file-info"><span class="file-idx">' + (idx + 1) + '</span><span class="file-name">' + (isImg ? '🖼️' : '📄') + ' ' + escapeHtml(entry.file.name) + '</span><span class="file-size">(' + (entry.file.size / 1024).toFixed(0) + 'KB)</span>' + eBadge + sBadge + '</div><div class="file-actions">' + pwdHtml + '<button class="btn-icon remove-btn" data-idx="' + idx + '">✕</button></div></div>';
+        }
+        listDiv.innerHTML = itemsHtml;
+        bindListEvents(listDiv);
+      }
+
+      function bindListEvents(list) {
+        if (!list) return;
+        var removeBtns = list.querySelectorAll('.remove-btn');
+        for (var i = 0; i < removeBtns.length; i++) {
+          removeBtns[i].onclick = function(e) {
+            e.stopPropagation();
+            var idx = parseInt(this.dataset.idx);
+            fileEntries.splice(idx, 1);
+            pageThumbnails = {};
+            renderFileList();
+          };
+        }
+        var pwdInputs = list.querySelectorAll('.pwd-input');
+        for (var j = 0; j < pwdInputs.length; j++) {
+          pwdInputs[j].oninput = function() {
+            var idx = parseInt(this.dataset.idx);
+            fileEntries[idx].password = this.value;
+            if (fileEntries[idx].status === 'error') {
+              fileEntries[idx].status = undefined;
+              pageThumbnails = {};
+              renderFileList();
+            }
+          };
+        }
+        var retryBtns = list.querySelectorAll('.btn-retry');
+        for (var k = 0; k < retryBtns.length; k++) {
+          retryBtns[k].onclick = function() {
+            var idx = parseInt(this.dataset.idx);
+            fileEntries[idx].status = undefined;
+            pageThumbnails = {};
+            renderFileList();
+            executeAction(idx);
+          };
+        }
+        setupDragSort(list);
+      }
+
+      function setupDragSort(list) {
+        var dragIdx = null;
+        var items = list.querySelectorAll('.file-list-item');
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          item.addEventListener('dragstart', function() {
+            dragIdx = parseInt(this.dataset.idx);
+            this.classList.add('dragging');
+          });
+          item.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+            var allItems = list.querySelectorAll('.file-list-item');
+            for (var j = 0; j < allItems.length; j++) {
+              allItems[j].classList.remove('drag-over');
+            }
+          });
+          item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+          });
+          item.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+          });
+          item.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            var dropIdx = parseInt(this.dataset.idx);
+            if (dragIdx !== null && dragIdx !== dropIdx) {
+              var moved = fileEntries.splice(dragIdx, 1)[0];
+              fileEntries.splice(dropIdx, 0, moved);
+              pageThumbnails = {};
+              renderFileList();
+            }
+          });
+        }
+      }
+
+      function updatePasswordUI() {
+        var hasEnc = false;
+        for (var i = 0; i < fileEntries.length; i++) {
+          if (fileEntries[i].encrypted) {
+            hasEnc = true;
+            break;
+          }
+        }
+        var useSame = isSamePasswordMode();
+        var gs = document.getElementById('globalPwdSection');
+        var sr = document.getElementById('samePwdRow');
+        if (gs) gs.style.display = (hasEnc && useSame && currentTool !== 'imagesToPdf') ? 'flex' : 'none';
+        if (sr) sr.style.display = (hasEnc && fileEntries.length > 1 && multiFileTools.indexOf(currentTool) !== -1) ? 'flex' : 'none';
+      }
+
+      function attachEvents() {
+        var area = document.getElementById('fileArea');
+        var input = document.getElementById('fileAreaInput');
+        if (area && input) {
+          area.onclick = function() { input.click(); };
+          area.ondragover = function(e) {
+            e.preventDefault();
+            area.classList.add('dragover');
+          };
+          area.ondragleave = function() { area.classList.remove('dragover'); };
+          area.ondrop = function(e) {
+            e.preventDefault();
+            area.classList.remove('dragover');
+            var fs = Array.from(e.dataTransfer.files).filter(function(f) {
+              if (currentTool === 'imagesToPdf') return f.type.startsWith('image/');
+              return f.type === 'application/pdf' || f.name.endsWith('.pdf');
+            });
+            if (fs.length) {
+              if (multiFileTools.indexOf(currentTool) === -1) fileEntries = [];
+              for (var i = 0; i < fs.length; i++) {
+                fileEntries.push({ file: fs[i], password: '', status: undefined, encrypted: undefined });
+              }
+              pageThumbnails = {};
+              renderFileList();
+            }
+          };
+          input.onchange = function() {
+            var fs = Array.from(input.files);
+            if (multiFileTools.indexOf(currentTool) === -1) fileEntries = [];
+            for (var i = 0; i < fs.length; i++) {
+              fileEntries.push({ file: fs[i], password: '', status: undefined, encrypted: undefined });
+            }
+            pageThumbnails = {};
+            input.value = '';
+            renderFileList();
+          };
+        }
+        var clearBtn = document.getElementById('clearBtn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function() {
+            fileEntries = [];
+            pageThumbnails = {};
+            renderFileList();
+          });
+        }
+        var samePwdCheck = document.getElementById('samePwdCheck');
+        if (samePwdCheck) {
+          samePwdCheck.addEventListener('change', function() {
+            pageThumbnails = {};
+            renderFileList();
+          });
+        }
+        var toggleBtns = document.querySelectorAll('.toggle-pwd');
+        for (var i = 0; i < toggleBtns.length; i++) {
+          toggleBtns[i].onclick = function() {
+            var tg = document.getElementById(this.dataset.target);
+            if (tg) {
+              tg.type = tg.type === 'password' ? 'text' : 'password';
+              this.textContent = tg.type === 'password' ? t('show') : t('hide');
+            }
+          };
+        }
+        var splitMode = document.getElementById('splitMode');
+        if (splitMode) {
+          splitMode.addEventListener('change', function(e) {
+            var w = document.getElementById('rangeInputWrap');
+            if (w) w.style.display = e.target.value === 'range' ? 'block' : 'none';
+          });
+        }
+        var compressMode = document.getElementById('compressMode');
+        if (compressMode) {
+          compressMode.addEventListener('change', function(e) {
+            var warn = document.getElementById('rasterizeWarning');
+            var bal = document.getElementById('balancedSettings');
+            if (warn) warn.style.display = e.target.value === 'rasterize' ? 'flex' : 'none';
+            if (bal) bal.style.display = e.target.value === 'balanced' ? 'block' : 'none';
+          });
+        }
+        var actionBtn = document.getElementById('actionBtn');
+        if (actionBtn) {
+          actionBtn.addEventListener('click', function() { executeAction(0); });
+        }
+      }
+
+      async function executeAction(startIdx) {
+        startIdx = startIdx || 0;
+        if (!fileEntries.length) {
+          setStatus(t('noFile'), 'warn');
+          return;
+        }
+        try {
+          if (currentTool === 'merge') {
+            await doMerge(startIdx);
+          } else if (currentTool === 'split') {
+            await doSplit();
+          } else if (currentTool === 'removePassword') {
+            await doRemovePassword(startIdx);
+          } else if (currentTool === 'compress') {
+            await doCompress();
+          } else if (currentTool === 'extract') {
+            await doExtract();
+          } else if (currentTool === 'extractPages') {
+            await doExtractPages();
+          } else if (currentTool === 'pdfToImages') {
+            await doPdfToImages();
+          } else if (currentTool === 'imagesToPdf') {
+            await doImagesToPdf();
+          } else if (currentTool === 'watermark') {
+            await doWatermark();
+          } else if (currentTool === 'organize') {
+            await doOrganize();
+          }
+        } catch (err) {
+          setStatus('❌ ' + err.message, 'warn');
+        }
+      }
+
+      async function doMerge(startIdx) {
+        if (fileEntries.length < 2) {
+          setStatus(t('atLeast2'), 'warn');
+          return;
+        }
+        var allImages = [];
+        var totalSize = 0;
+        for (var i = 0; i < fileEntries.length; i++) {
+          totalSize += fileEntries[i].file.size;
+        }
+        for (var i = startIdx; i < fileEntries.length; i++) {
+          setProgress((i / fileEntries.length) * 100, t('processing') + ' ' + fileEntries[i].file.name);
+          try {
+            var result = await processPdf(fileEntries[i].file, getPasswordForFile(i));
+            allImages = allImages.concat(result.pageImages);
+            fileEntries[i].status = 'ok';
+          } catch (err) {
+            handleError(err, i);
+            return;
+          }
+        }
+        setProgress(100, t('generating'));
+        var pdfBytes = await createPdfFromImages(allImages);
+        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        showDownloadResult(totalSize, blob.size);
+        download(blob, 'merged.pdf');
+        for (var i = 0; i < fileEntries.length; i++) {
+          fileEntries[i].status = undefined;
+        }
+        setStatus('✅ ' + t('mergeSuccess') + ' (' + allImages.length + t('pages') + ')', 'success');
+        historyManager.addEntry({ toolIcon: '🔗', toolName: t('merge') });
+        renderFileList();
+      }
+
+      async function doSplit() {
+        var result = await processPdf(fileEntries[0].file, getPasswordForFile(0));
+        var pageImages = result.pageImages;
+        var mode = document.getElementById('splitMode');
+        mode = mode ? mode.value : 'pages';
+        var totalSize = fileEntries[0].file.size;
+        var outputSize = 0;
+        if (mode === 'pages') {
+          var blobs = [];
+          for (var i = 0; i < pageImages.length; i++) {
+            setProgress((i / pageImages.length) * 100);
+            var pdfBytes = await createPdfFromImages([pageImages[i]]);
+            var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            blobs.push({ blob: blob, name: 'page_' + (i + 1) + '.pdf' });
+            outputSize += blob.size;
+          }
+          if (pageImages.length > 1) {
+            await downloadMultipleAsZip(blobs, 'split_pages.zip');
+          } else {
+            download(blobs[0].blob, blobs[0].name);
+          }
+          showDownloadResult(totalSize, outputSize);
+        } else {
+          var rangeInput = document.getElementById('rangeInput');
+          var indices = parseRange(rangeInput ? rangeInput.value : '', pageImages.length);
+          if (!indices.length) {
+            setStatus(t('invalidRange'), 'warn');
+            return;
+          }
+          var selectedImages = [];
+          for (var i = 0; i < indices.length; i++) {
+            selectedImages.push(pageImages[indices[i]]);
+          }
+          var pdfBytes = await createPdfFromImages(selectedImages);
+          var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          showDownloadResult(totalSize, blob.size);
+          download(blob, 'split.pdf');
+        }
+        setStatus('✅ ' + t('splitSuccess'), 'success');
+        historyManager.addEntry({ toolIcon: '✂️', toolName: t('split') });
+      }
+
+      async function doRemovePassword(startIdx) {
+        var totalSize = 0;
+        for (var i = 0; i < fileEntries.length; i++) {
+          totalSize += fileEntries[i].file.size;
+        }
+        var outputSize = 0;
+        var blobs = [];
+        for (var i = startIdx; i < fileEntries.length; i++) {
+          setProgress((i / fileEntries.length) * 100, t('processing') + ' ' + fileEntries[i].file.name);
+          try {
+            var result = await processPdf(fileEntries[i].file, getPasswordForFile(i));
+            var pdfBytes = await createPdfFromImages(result.pageImages);
+            var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            var name = fileEntries[i].file.name.replace(/\.pdf$/i, '') + '_no_password.pdf';
+            blobs.push({ blob: blob, name: name });
+            outputSize += blob.size;
+            fileEntries[i].status = 'ok';
+          } catch (err) {
+            handleError(err, i);
+            return;
+          }
+        }
+        if (blobs.length > 1) {
+          await downloadMultipleAsZip(blobs, 'unlocked_files.zip');
+        } else {
+          download(blobs[0].blob, blobs[0].name);
+        }
+        showDownloadResult(totalSize, outputSize);
+        for (var i = 0; i < fileEntries.length; i++) {
+          fileEntries[i].status = undefined;
+        }
+        setStatus('✅ ' + t('extractSuccess'), 'success');
+        historyManager.addEntry({ toolIcon: '🔓', toolName: t('removePassword') });
+        renderFileList();
+      }
+
+      async function doCompress() {
+        setProgress(0, t('processing'));
+        var result = await processPdf(fileEntries[0].file, getPasswordForFile(0));
+        var pdfBytes = await createPdfFromImages(result.pageImages);
+        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        showDownloadResult(fileEntries[0].file.size, blob.size);
+        download(blob, 'compressed.pdf');
+        setStatus('✅ ' + t('compressSuccess'), 'success');
+        historyManager.addEntry({ toolIcon: '📦', toolName: t('compress') });
+      }
+
+      async function doExtract() {
+        var images = await extractImages(fileEntries[0].file, getPasswordForFile(0));
+        if (!images.length) {
+          setStatus(t('noFile'), 'warn');
+          return;
+        }
+        if (images.length === 1) {
+          download(images[0].blob, 'image.png');
+        } else if (typeof JSZip !== 'undefined') {
+          var zip = new JSZip();
+          for (var i = 0; i < images.length; i++) {
+            zip.file('page' + images[i].pageNum + '_' + images[i].index + '.png', images[i].blob);
+          }
+          var zipBlob = await zip.generateAsync({ type: 'blob' });
+          download(zipBlob, 'images.zip');
+        } else {
+          for (var i = 0; i < images.length; i++) {
+            download(images[i].blob, 'page' + images[i].pageNum + '_' + images[i].index + '.png');
+          }
+        }
+        setStatus('✅ ' + t('extractSuccess') + ' (' + images.length + ')', 'success');
+        historyManager.addEntry({ toolIcon: '🖼️', toolName: t('extract') });
+      }
+
+      async function doExtractPages() {
+        setProgress(0, t('processing'));
+        var result = await processPdf(fileEntries[0].file, getPasswordForFile(0));
+        var rangeStr = document.getElementById('extractRange');
+        rangeStr = rangeStr ? rangeStr.value : '';
+        var indices = parseRange(rangeStr, result.pageImages.length);
+        if (!indices.length) {
+          setStatus(t('pleaseEnterRange'), 'warn');
+          return;
+        }
+        var selectedImages = [];
+        for (var i = 0; i < indices.length; i++) {
+          selectedImages.push(result.pageImages[indices[i]]);
+        }
+        var pdfBytes = await createPdfFromImages(selectedImages);
+        download(new Blob([pdfBytes], { type: 'application/pdf' }), 'extracted_pages.pdf');
+        setStatus('✅ ' + t('extractSuccess') + ' (' + indices.length + t('pages') + ')', 'success');
+        historyManager.addEntry({ toolIcon: '📑', toolName: t('extractPages') });
+      }
+
+      async function doPdfToImages() {
+        setProgress(0, t('processing'));
+        var options = getRenderOptions();
+        var result = await processPdf(fileEntries[0].file, getPasswordForFile(0));
+        var formatEl = document.getElementById('outputFormat');
+        var format = formatEl ? formatEl.value : 'jpeg';
+        var zipEl = document.getElementById('zipDownload');
+        var useZip = zipEl ? zipEl.checked : false;
+        if (result.pageImages.length === 1 && !useZip) {
+          var blob = format === 'png' ? await jpegToPng(result.pageImages[0].blob) : result.pageImages[0].blob;
+          download(blob, 'page_1.' + format);
+        } else if (useZip && typeof JSZip !== 'undefined') {
+          var zip = new JSZip();
+          for (var i = 0; i < result.pageImages.length; i++) {
+            setProgress((i / result.pageImages.length) * 100);
+            var blob = format === 'png' ? await jpegToPng(result.pageImages[i].blob) : result.pageImages[i].blob;
+            zip.file('page_' + (i + 1) + '.' + format, blob);
+          }
+          download(await zip.generateAsync({ type: 'blob' }), 'pdf_images.zip');
+        } else {
+          var blobs = [];
+          for (var i = 0; i < result.pageImages.length; i++) {
+            setProgress((i / result.pageImages.length) * 100);
+            var blob = format === 'png' ? await jpegToPng(result.pageImages[i].blob) : result.pageImages[i].blob;
+            blobs.push({ blob: blob, name: 'page_' + (i + 1) + '.' + format });
+          }
+          await downloadMultipleAsZip(blobs, 'pdf_images.zip');
+        }
+        setStatus('✅ ' + t('convertSuccess') + ' (' + result.pageImages.length + ')', 'success');
+        historyManager.addEntry({ toolIcon: '🔄', toolName: t('pdfToImages') });
+      }
+
       async function doImagesToPdf() {
         if (fileEntries.length === 0) {
           setStatus(t('noFile'), 'warn');
           return;
         }
         setProgress(0, t('processing'));
-        const pageSize = document.getElementById('pageSize')?.value || 'auto';
-        const fitMode = document.getElementById('fitMode')?.value || 'fit';
-        const pageDims = { a4: [595, 842], letter: [612, 792] };
-        const { PDFDocument } = PDFLib;
-        const doc = await PDFDocument.create();
-        for (let i = 0; i < fileEntries.length; i++) {
-          setProgress((i / fileEntries.length) * 100, `${t('processing')} ${fileEntries[i].file.name}`);
-          const buf = await fileEntries[i].file.arrayBuffer();
-          const ext = fileEntries[i].file.name.split('.').pop().toLowerCase();
-          let img;
-          if (ext === 'png') img = await doc.embedPng(buf);
-          else if (ext === 'jpg' || ext === 'jpeg') img = await doc.embedJpg(buf);
-          else {
+        var pageSizeEl = document.getElementById('pageSize');
+        var pageSize = pageSizeEl ? pageSizeEl.value : 'auto';
+        var fitModeEl = document.getElementById('fitMode');
+        var fitMode = fitModeEl ? fitModeEl.value : 'fit';
+        var pageDims = { a4: [595, 842], letter: [612, 792] };
+        var doc = await PDFLib.PDFDocument.create();
+        for (var i = 0; i < fileEntries.length; i++) {
+          setProgress((i / fileEntries.length) * 100, t('processing') + ' ' + fileEntries[i].file.name);
+          var buf = await fileEntries[i].file.arrayBuffer();
+          var ext = fileEntries[i].file.name.split('.').pop().toLowerCase();
+          var img;
+          if (ext === 'png') {
+            img = await doc.embedPng(buf);
+          } else if (ext === 'jpg' || ext === 'jpeg') {
+            img = await doc.embedJpg(buf);
+          } else {
             try { img = await doc.embedPng(buf); } catch (e) { img = await doc.embedJpg(buf); }
           }
-          let pw, ph;
-          if (pageSize === 'auto') { pw = img.width;
-            ph = img.height; } else { [pw, ph] = pageDims[pageSize]; }
-          const page = doc.addPage([pw, ph]);
-          let dw = img.width,
+          var pw, ph;
+          if (pageSize === 'auto') {
+            pw = img.width;
+            ph = img.height;
+          } else {
+            pw = pageDims[pageSize][0];
+            ph = pageDims[pageSize][1];
+          }
+          var page = doc.addPage([pw, ph]);
+          var dw = img.width,
             dh = img.height;
           if (fitMode === 'fit') {
-            const s = Math.min(pw / img.width, ph / img.height);
+            var s = Math.min(pw / img.width, ph / img.height);
             dw = img.width * s;
             dh = img.height * s;
           } else if (fitMode === 'fill') {
-            const s = Math.max(pw / img.width, ph / img.height);
+            var s = Math.max(pw / img.width, ph / img.height);
             dw = img.width * s;
             dh = img.height * s;
           }
           page.drawImage(img, { x: (pw - dw) / 2, y: (ph - dh) / 2, width: dw, height: dh });
           fileEntries[i].status = 'ok';
         }
-        const bytes = await doc.save();
-        download(new Blob([bytes], { type: 'application/pdf' }), 'images_to_pdf.pdf');
-        fileEntries.forEach(e => e.status = undefined);
-        setStatus(`✅ ${t('composeSuccess')} (${fileEntries.length})`, 'success');
+        var pdfBytes = await doc.save();
+        download(new Blob([pdfBytes], { type: 'application/pdf' }), 'images_to_pdf.pdf');
+        for (var i = 0; i < fileEntries.length; i++) {
+          fileEntries[i].status = undefined;
+        }
+        setStatus('✅ ' + t('composeSuccess') + ' (' + fileEntries.length + ')', 'success');
+        historyManager.addEntry({ toolIcon: '📸', toolName: t('imagesToPdf') });
         renderFileList();
+      }
+
+      async function doWatermark() {
+        if (!fileEntries.length) {
+          setStatus(t('noFile'), 'warn');
+          return;
+        }
+        setProgress(0, t('processing'));
+        var watermarkTextEl = document.getElementById('watermarkText');
+        var watermarkText = watermarkTextEl ? watermarkTextEl.value : '机密';
+        var opacityEl = document.getElementById('watermarkOpacity');
+        var opacity = opacityEl ? parseFloat(opacityEl.value) : 0.2;
+        var arrayBuf = await fileEntries[0].file.arrayBuffer();
+        var pdfDoc = await PDFLib.PDFDocument.load(arrayBuf, { ignoreEncryption: true });
+        var pages = pdfDoc.getPages();
+        var font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+        for (var i = 0; i < pages.length; i++) {
+          setProgress((i / pages.length) * 100);
+          var page = pages[i];
+          var size = page.getSize();
+          var width = size.width;
+          var height = size.height;
+          var fontSize = Math.min(width, height) * 0.08;
+          page.drawText(watermarkText, {
+            x: width / 2 - (watermarkText.length * fontSize * 0.3),
+            y: height / 2,
+            size: fontSize,
+            font: font,
+            color: PDFLib.rgb(0.6, 0.6, 0.6),
+            opacity: opacity,
+            rotate: degreesToRadians(-45),
+          });
+        }
+        var pdfBytes = await pdfDoc.save();
+        download(new Blob([pdfBytes], { type: 'application/pdf' }), fileEntries[0].file.name.replace(/\.pdf$/i, '') + '_watermarked.pdf');
+        setStatus('✅ ' + t('watermarkSuccess'), 'success');
+        historyManager.addEntry({ toolIcon: '💧', toolName: t('watermark') });
+      }
+
+      async function doOrganize() {
+        if (!fileEntries.length) {
+          setStatus(t('noFile'), 'warn');
+          return;
+        }
+        setProgress(0, t('processing'));
+        var result = await processPdf(fileEntries[0].file, getPasswordForFile(0));
+        var pdfBytes = await createPdfFromImages(result.pageImages);
+        download(new Blob([pdfBytes], { type: 'application/pdf' }), 'organized.pdf');
+        setStatus('✅ ' + t('organizeSuccess') + ' (' + result.pageImages.length + t('pages') + ')', 'success');
+        historyManager.addEntry({ toolIcon: '🗂️', toolName: t('organize') });
+      }
+
+      // ==================== 模态框 ====================
+      function showModal(title, html, showClose) {
+        if (showClose === undefined) showClose = true;
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var bgColor = isDark ? '#1e293b' : 'white';
+        var textColor = isDark ? '#f1f5f9' : '#1a2639';
+        overlay.innerHTML = '<div style="background:' + bgColor + ';border-radius:20px;padding:24px;max-width:420px;width:90%;color:' + textColor + ';"><h3 style="margin-bottom:12px;">' + title + '</h3>' + html + (showClose ? '<button id="modalCloseBtn" style="margin-top:12px;width:100%;padding:10px;border:none;border-radius:20px;background:#1e293b;color:white;cursor:pointer;font-size:0.9rem;">' + t('gotIt') + '</button>' : '') + '</div>';
+        document.body.appendChild(overlay);
+        var closeBtn = overlay.querySelector('#modalCloseBtn');
+        if (closeBtn) {
+          closeBtn.onclick = function() { overlay.remove(); };
+        }
+        overlay.onclick = function(e) {
+          if (e.target === overlay) overlay.remove();
+        };
+        return overlay;
+      }
+
+      function installPWA() {
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+          showModal(t('installTitle'), '<div style="text-align:center;padding:12px;"><div style="font-size:40px;">📱</div><p>' + t('usingInstalled') + '</p><p style="font-size:0.8rem;color:#64748b;">' + t('runningStandalone') + '</p></div>');
+          return;
+        }
+        if (!window._deferredPrompt) {
+          var ua = navigator.userAgent;
+          var b = 'other';
+          if (/Edg/.test(ua)) b = 'edge';
+          else if (/Chrome/.test(ua) && /Google Inc/.test(navigator.vendor)) b = 'chrome';
+          else if (/Safari/.test(ua) && !/Chrome/.test(ua)) b = 'safari';
+          else if (/iPhone|iPad|iPod/.test(ua)) b = 'ios';
+          var h = '';
+          if (b === 'chrome' || b === 'edge') {
+            h = '<p style="font-weight:500;">' + t('chromeSteps') + '</p><p>1. ' + t('step1chrome') + '</p><p>2. ' + t('step2chrome') + '</p>';
+          } else if (b === 'ios' || b === 'safari') {
+            h = '<p style="font-weight:500;">' + t('iosSteps') + '</p><p>1. ' + t('step1ios') + '</p><p>2. ' + t('step2ios') + '</p>';
+          } else {
+            h = '<p>' + t('browserNotSupport') + '</p><p style="font-size:0.8rem;">' + t('suggestBrowser') + '</p>';
+          }
+          showModal(t('installTitle'), h);
+          return;
+        }
+        window._deferredPrompt.prompt();
+        window._deferredPrompt = null;
+        updateMenuLanguage();
+      }
+
+      function showLanguageSelector() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var bgColor = isDark ? '#1e293b' : 'white';
+        var textColor = isDark ? '#f1f5f9' : '#1a2639';
+        var btnBg = isDark ? '#334155' : '#f1f5f9';
+        var btnText = isDark ? '#f1f5f9' : '#1a2639';
+        var html = '<div style="margin-bottom:12px;padding:10px;background:rgba(0,0,0,0.04);border-radius:12px;text-align:center;"><div style="font-size:0.8rem;color:#64748b;">' + t('currentLanguage') + '</div><div style="font-size:1.2rem;font-weight:600;">' + (currentLang === 'zh-CN' ? '简体中文' : 'English') + '</div></div>';
+        html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+        html += '<div class="lopt" data-l="zh-CN" style="padding:14px;border-radius:12px;cursor:pointer;border:2px solid ' + (currentLang === 'zh-CN' ? '#1e293b' : 'transparent') + ';background:' + (currentLang === 'zh-CN' ? 'rgba(30,41,59,0.05)' : 'rgba(0,0,0,0.02)') + ';">🇨🇳 ' + t('simplifiedChinese') + ' ' + (currentLang === 'zh-CN' ? '✓' : '') + '</div>';
+        html += '<div class="lopt" data-l="en-US" style="padding:14px;border-radius:12px;cursor:pointer;border:2px solid ' + (currentLang === 'en-US' ? '#1e293b' : 'transparent') + ';background:' + (currentLang === 'en-US' ? 'rgba(30,41,59,0.05)' : 'rgba(0,0,0,0.02)') + ';">🇺🇸 ' + t('english') + ' ' + (currentLang === 'en-US' ? '✓' : '') + '</div>';
+        html += '</div>';
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
+        overlay.innerHTML = '<div style="background:' + bgColor + ';border-radius:20px;padding:24px;max-width:380px;width:90%;color:' + textColor + ';"><h3 style="margin-bottom:12px;">' + t('selectLanguage') + '</h3>' + html + '<button id="lclose" style="margin-top:12px;width:100%;padding:10px;border:none;border-radius:20px;background:' + btnBg + ';color:' + btnText + ';cursor:pointer;">' + t('close') + '</button></div>';
+        document.body.appendChild(overlay);
+        var lopts = overlay.querySelectorAll('.lopt');
+        for (var i = 0; i < lopts.length; i++) {
+          lopts[i].onclick = function() {
+            var nl = this.dataset.l;
+            if (nl !== currentLang) {
+              currentLang = nl;
+              try { localStorage.setItem('pdf-tool-lang', nl); } catch (e) {}
+              updateAllTexts();
+            }
+            overlay.remove();
+          };
+        }
+        overlay.querySelector('#lclose').onclick = function() { overlay.remove(); };
+        overlay.onclick = function(e) {
+          if (e.target === overlay) overlay.remove();
+        };
+      }
+
+      function showHistory() {
+        var history = historyManager.getHistory();
+        if (!history.length) {
+          var html = '<div style="text-align:center;padding:20px;color:var(--text-secondary);">📜 ' + t('noHistory') + '</div>';
+          showModal(t('history'), html);
+          return;
+        }
+        var itemsHtml = '';
+        var limit = Math.min(history.length, 10);
+        for (var i = 0; i < limit; i++) {
+          var h = history[i];
+          var date = new Date(h.timestamp);
+          var timeStr = (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          var borderColor = isDark ? '#334155' : '#e5e7eb';
+          itemsHtml += '<div style="padding:10px;border-bottom:1px solid ' + borderColor + ';display:flex;justify-content:space-between;align-items:center;"><div><span>' + (h.toolIcon || '📄') + '</span> ' + (h.toolName || '') + '</div><div style="font-size:0.75rem;color:var(--text-secondary);">' + timeStr + '</div></div>';
+        }
+        var html = '<div style="max-height:300px;overflow-y:auto;margin-bottom:12px;">' + itemsHtml + '</div><button id="clearHistoryBtn" style="width:100%;padding:10px;border:none;border-radius:20px;background:#dc2626;color:white;cursor:pointer;">' + t('clearHistory') + '</button>';
+        var overlay = showModal(t('history'), html, false);
+        var clearBtn = overlay.querySelector('#clearHistoryBtn');
+        if (clearBtn) {
+          clearBtn.onclick = function() {
+            historyManager.clearHistory();
+            overlay.remove();
+            showHistory();
+          };
+        }
+      }
+
+      function updateAllTexts() {
+        document.querySelector('h1').textContent = t('menuTitle');
+        document.querySelector('.subtitle').textContent = t('subtitle');
+        var labels = ['removePassword', 'split', 'merge', 'compress', 'extract', 'extractPages', 'pdfToImages', 'imagesToPdf', 'watermark', 'organize'];
+        var labelEls = document.querySelectorAll('.tool-btn .tool-label');
+        for (var i = 0; i < labelEls.length; i++) {
+          if (i < labels.length) labelEls[i].textContent = t(labels[i]);
+        }
+        updateMenuLanguage();
+        renderToolUI();
+      }
+
+      function updateMenuLanguage() {
+        var ib = document.getElementById('installAppBtn');
+        if (ib) {
+          var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+          ib.textContent = isPWA ? t('installedApp') : (window._deferredPrompt ? t('installApp') : t('addToHome'));
+        }
+        var lb = document.getElementById('languageMenuItem');
+        if (lb) lb.textContent = t('language');
+        var hi = document.getElementById('historyMenuItem');
+        if (hi) hi.textContent = t('history');
+        var tt = document.getElementById('themeToggleItem');
+        if (tt) tt.textContent = t('themeToggle');
       }
 
       // ==================== 菜单事件 ====================
@@ -1516,6 +2267,16 @@
         }
       });
 
+      document.getElementById('themeToggleItem').addEventListener('click', function() {
+        document.getElementById('menuDropdown').classList.remove('show');
+        toggleTheme();
+      });
+
+      document.getElementById('historyMenuItem').addEventListener('click', function() {
+        document.getElementById('menuDropdown').classList.remove('show');
+        showHistory();
+      });
+
       document.getElementById('installAppBtn').addEventListener('click', function() {
         document.getElementById('menuDropdown').classList.remove('show');
         installPWA();
@@ -1532,7 +2293,8 @@
         updateMenuLanguage();
       });
 
-      // 初始化
+      // ==================== 初始化 ====================
+      initTheme();
       updateAllTexts();
     })();
   </script>
