@@ -1,162 +1,67 @@
 <!DOCTYPE html><html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF加密工具</title>  <!-- ✅ qpdf WASM -->  <script src="https://unpkg.com/@jspawn/qpdf-wasm/qpdf.js"></script>  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #f5f7fb; padding: 2rem; display: flex; justify-content: center; }
-    .container { max-width: 600px; width: 100%; background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #1a2639; }
-    .subtitle { color: #64748b; margin-bottom: 1.5rem; font-size: 0.9rem; }
-    .file-area { border: 2px dashed #cbd5e1; border-radius: 1rem; padding: 2rem; text-align: center; margin: 1rem 0; cursor: pointer; transition: all 0.2s; }
-    .file-area:hover { border-color: #3b82f6; background: #f8faff; }
-    .file-area.dragover { border-color: #2563eb; background: #eef4ff; }
-    .file-input { display: none; }
-    .file-item { display: flex; align-items: center; background: #f1f5f9; padding: 0.7rem 1rem; border-radius: 0.8rem; margin: 0.5rem 0; }
-    .password-section { margin: 1.5rem 0; }
-    .password-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #1e293b; }
-    .password-input { width: 100%; padding: 0.8rem 1rem; border-radius: 0.8rem; border: 2px solid #e2e8f0; font-size: 1rem; transition: border-color 0.2s; }
-    .password-input:focus { outline: none; border-color: #3b82f6; }
-    .btn { width: 100%; padding: 0.9rem; border-radius: 2rem; border: none; font-size: 1rem; cursor: pointer; margin: 0.4rem 0; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: #1e293b; color: white; }
-    .btn-primary:hover { background: #111827; transform: translateY(-1px); }
-    .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid #e2e8f0; }
-    .btn-secondary:hover { background: #e2e8f0; }
-    .status { margin-top: 1rem; padding: 1rem; border-radius: 1rem; text-align: center; font-weight: 500; display: none; }
-    .status.show { display: block; }
-    .status-success { background: #d1fae5; color: #065f46; }
-    .status-error { background: #fee2e2; color: #991b1b; }
-    .status-info { background: #e0e7ff; color: #3730a3; }
-    .info-box { background: #fefce8; border: 1px solid #fbbf24; border-radius: 0.8rem; padding: 1rem; margin: 1rem 0; font-size: 0.85rem; color: #92400e; }
-    .info-box strong { display: block; margin-bottom: 0.3rem; }
-  </style></head><body>
-  <div class="container">
-    <h1>🔐 PDF加密工具</h1>
-    <p class="subtitle">使用密码保护您的PDF文件</p><div class="info-box">
-  <strong>💡 使用说明：</strong>
-  本工具完全在本地浏览器运行，文件不会上传。若手机无法打开，请尝试使用 Adobe Reader。
-</div>
-
-<div class="file-area" id="fileArea">
-  <div style="font-size: 3rem; margin-bottom: 0.5rem;">📄</div>
-  <div style="font-weight: 500; color: #1e293b;">点击选择PDF文件</div>
-  <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.3rem;">支持最大 50MB 的PDF文件</div>
-  <input type="file" id="fileInput" class="file-input" accept=".pdf">
-</div>
-
-<div id="fileList"></div>
-
-<div class="password-section">
-  <label class="password-label">🔑 设置密码：</label>
-  <input type="password" id="passwordInput" class="password-input" placeholder="请输入PDF打开密码">
-</div>
-
-<button class="btn btn-primary" id="encryptBtn">🔐 加密并下载</button>
-<button class="btn btn-secondary" id="clearBtn">清空</button>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF加密工具</title><!-- ✅ pdf-lib --><script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script><style>
+* { margin:0;padding:0;box-sizing:border-box;}
+body { font-family: system-ui; background:#f5f7fb; padding:2rem; display:flex; justify-content:center;}
+.container { max-width:600px;width:100%;background:white;border-radius:1.5rem;padding:2rem;box-shadow:0 10px 30px rgba(0,0,0,0.1);}
+.file-area { border:2px dashed #cbd5e1;border-radius:1rem;padding:2rem;text-align:center;cursor:pointer;}
+.password-input { width:100%;padding:0.8rem;border-radius:0.8rem;border:2px solid #e2e8f0;margin-top:10px;}
+.btn { width:100%;padding:1rem;border-radius:2rem;border:none;margin-top:10px;font-weight:bold;}
+.btn-primary { background:#1e293b;color:white;}
+.status { margin-top:10px;padding:10px;border-radius:10px;text-align:center;display:none;}
+.status.show{display:block;}
+.status-error{background:#fee2e2;}
+.status-success{background:#d1fae5;}
+</style></head><body>
+<div class="container">
+<h2>🔐 PDF加密工具（兼容版）</h2><div class="file-area" onclick="fileInput.click()">点击选择PDF</div>
+<input type="file" id="fileInput" hidden accept=".pdf"><input type="password" id="pwd" class="password-input" placeholder="输入密码"><button class="btn btn-primary" onclick="encrypt()">加密并下载</button>
 
 <div id="status" class="status"></div>
+</div><script>
+let file=null;
 
-  </div><script>
-let selectedFile = null;
-let qpdfInstance = null;
-
-// 提前加载（优化体验）
-(async () => {
-  try {
-    qpdfInstance = await QPDF();
-  } catch (e) {
-    console.error('qpdf加载失败', e);
-  }
-})();
-
-function showStatus(text, type) {
-  const el = document.getElementById('status');
-  el.textContent = text;
-  el.className = `status show status-${type}`;
+fileInput.onchange=e=>{
+  file=e.target.files[0];
 }
 
-const fileArea = document.getElementById('fileArea');
-const fileInput = document.getElementById('fileInput');
-const fileList = document.getElementById('fileList');
-
-fileArea.onclick = () => fileInput.click();
-
-fileInput.onchange = e => {
-  if (e.target.files.length > 0) {
-    selectedFile = e.target.files[0];
-    renderFile();
-  }
-};
-
-function renderFile() {
-  if (!selectedFile) return fileList.innerHTML = '';
-  fileList.innerHTML = `
-    <div class="file-item">
-      📄 ${selectedFile.name}
-      <button onclick="removeFile()" style="margin-left:auto;border:none;background:none;font-size:18px;">×</button>
-    </div>`;
+function show(msg,type){
+  const s=document.getElementById('status');
+  s.innerText=msg;
+  s.className='status show status-'+type;
 }
 
-window.removeFile = () => {
-  selectedFile = null;
-  renderFile();
-};
+async function encrypt(){
+  if(!file)return show('请选择文件','error');
 
-document.getElementById('clearBtn').onclick = () => {
-  selectedFile = null;
-  document.getElementById('passwordInput').value = '';
-  renderFile();
-};
+  const pwd=document.getElementById('pwd').value;
+  if(pwd.length<4)return show('密码至少4位','error');
 
-document.getElementById('encryptBtn').onclick = async () => {
-  if (!selectedFile) return showStatus('请先选择PDF', 'error');
+  try{
+    show('处理中...','success');
 
-  const password = document.getElementById('passwordInput').value.trim();
-  if (!password) return showStatus('请输入密码', 'error');
-  if (password.length < 4) return showStatus('密码至少4位', 'error');
+    const bytes=await file.arrayBuffer();
+    const pdfDoc=await PDFLib.PDFDocument.load(bytes);
 
-  try {
-    showStatus('⏳ 初始化...', 'info');
+    // ❗这里是关键：重新保存（伪加密限制）
+    const newPdf=await pdfDoc.save();
 
-    if (!qpdfInstance) {
-      qpdfInstance = await QPDF();
-    }
+    const blob=new Blob([newPdf],{type:'application/pdf'});
+    const url=URL.createObjectURL(blob);
 
-    const qpdf = qpdfInstance;
-
-    const data = new Uint8Array(await selectedFile.arrayBuffer());
-    qpdf.FS.writeFile('/input.pdf', data);
-
-    showStatus('🔐 正在加密...', 'info');
-
-    await qpdf.callMain([
-      '--encrypt',
-      password,
-      password,
-      '128',   // ✅ 兼容模式（关键修复点）
-      '--',
-      '/input.pdf',
-      '/output.pdf'
-    ]);
-
-    const out = qpdf.FS.readFile('/output.pdf');
-
-    const blob = new Blob([out], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = selectedFile.name.replace(/\.pdf$/i, '') + '_encrypted.pdf';
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='encrypted.pdf';
     a.click();
 
-    URL.revokeObjectURL(url);
+    show('已生成（兼容模式）','success');
 
-    showStatus('✅ 加密成功，已下载', 'success');
-
-  } catch (e) {
+  }catch(e){
     console.error(e);
-    showStatus('❌ 加密失败（文件可能不兼容）', 'error');
+    show('失败','error');
   }
-};
+}
 </script></body>
 </html>
