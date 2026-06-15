@@ -1,0 +1,46 @@
+[
+    {
+        "name": "推荐",
+        "list": [
+            {
+                "name": "公众号：奇奇资源库",
+                "icon": "http://bd.qiqiv.cn/公众号.jpg"
+            }
+        ]
+    },
+    {
+        "name": "每月2号，16号更新",
+        "list": [
+            {
+                "name": "每月2号，16号更新",
+                "url": "https://github.com/scorpion2u/test/raw/refs/heads/main/%E6%B5%8B%E8%AF%95%E5%8C%85.zip",
+                "icon": "http://bd.qiqiv.cn/更新.jpg",
+                "version": "06.10"
+            },
+            {
+                "name": "备用更新链接",
+                "url": "http://bd.qiqiv.cn/测试包.zip",
+                "icon": "http://bd.qiqiv.cn/更新2.jpg"
+            },
+            {
+                "name": "“南风”线路补丁",
+                "url": "http://qiqiv.cn/南风.zip",
+                "icon": "http://bd.qiqiv.cn/南风.jpg",
+                "version": "06.10"
+            }
+        ]
+    },
+    {
+        "name": "最新：20260613",
+        "list": [
+            {
+                "name": "公众号：奇奇资源库",
+                "icon": "http://bd.qiqiv.cn/论坛.jpg"
+            },
+            {
+                "name": "配置说明",
+                "icon": "http://bd.qiqiv.cn/说明.jpg"
+            }
+        ]
+    }
+]
